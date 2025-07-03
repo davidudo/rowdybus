@@ -24,6 +24,10 @@
       rel="apple-touch-icon"
       href="https://www.rowdybus.com/wp-content/uploads/2024/06/fav-icon-rowdy-boats.png"
     />
+    <link
+      rel="stylesheet"
+      href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+    />
     <style>
       * {
         box-sizing: border-box;
@@ -55,7 +59,7 @@
         background: transparent;
         position: fixed;
         width: 100%;
-        z-index: 20;
+        z-index: 999999;
         transition: background 0.3s ease;
       }
 
@@ -87,8 +91,9 @@
       nav a {
         color: white;
         text-decoration: none;
-        font-weight: 600;
+        font-weight: 500;
         white-space: nowrap;
+        font-size: 14px;
       }
 
       nav a:hover {
@@ -241,18 +246,25 @@
       }
 
       /* Hero Section */
-      .hero {
+      .hero-container {
         background: linear-gradient(
             to top,
             rgba(0, 0, 0, 0.98),
             rgba(0, 0, 0, 0)
           ),
-          url("https://github.com/davidudo/rowdybus/blob/main/images/hero.jpg?raw=true") no-repeat center center/cover;
+          url("https://github.com/davidudo/rowdybus/blob/main/images/hero.jpg?raw=true")
+            no-repeat center center/cover;
         height: 100dvh;
+        display: flex;
+        align-items: flex-end;
+      }
+
+      .hero {
         display: flex;
         flex-direction: row;
         align-items: flex-end;
         padding: 6rem 2rem;
+        gap: 1.5rem;
       }
 
       .hero-sub {
@@ -266,7 +278,7 @@
       }
 
       .hero-title {
-        font-size: 4.2rem;
+        font-size: 3.8rem;
         font-weight: 900;
         line-height: 1.2;
         font-family: "Unbounded", sans-serif;
@@ -304,6 +316,14 @@
       }
 
       @media (max-width: 1024px) {
+        .hero {
+          flex-direction: column;
+          justify-content: flex-end;
+          align-items: flex-start;
+          max-width: none;
+          padding: 4rem 2rem;
+        }
+
         .hero-title {
           font-size: 2.5rem;
         }
@@ -338,7 +358,6 @@
         }
 
         .hero-action {
-          margin-top: 1.5rem;
           padding: 0.85rem 3rem;
           border-radius: 12px;
         }
@@ -430,16 +449,8 @@
         opacity: 0.95;
       }
 
-      .map-container {
-        position: relative;
-        width: 100%;
-        height: 500px;
-        background: linear-gradient(45deg, #e3f2fd 0%, #bbdefb 100%);
-        overflow: hidden;
-        margin: 0;
-        border-radius: 20px;
-        margin-bottom: 2rem;
-        border: 1.5px solid #b3b3b3;
+      .eui-slider {
+        border-radius: 15px;
       }
 
       .cta-button {
@@ -469,84 +480,103 @@
       }
 
       .table-of-contents {
-        margin: 40px 0px;
+        margin: 40px 0;
         border-radius: 18px;
         border: 1.5px solid #b3b3b3;
+        background: #fff;
         overflow: hidden;
         padding: 1rem;
       }
 
       .table-of-contents h2 {
         padding: 15px 20px;
-        margin-bottom: 0.5rem;
-        background: #e6e6e6;
+        margin: -1rem -1rem 1rem -1rem;
+        background: #f5f5f5;
         font-size: 1.2em;
-        border-radius: 13px;
+        font-weight: 600;
+        color: #002d65;
+        border-radius: 13px 13px 0 0;
+        border-bottom: 1px solid #e0e0e0;
       }
 
       .toc-item {
-        padding: 12px 0px;
-        cursor: pointer;
-        display: flex;
-        align-items: center;
+        padding: 8px 0;
         transition: all 0.3s ease;
-        color: #4c4c44;
+        cursor: pointer;
       }
 
       .toc-item.has-dropdown {
         flex-direction: column;
         align-items: stretch;
         padding: 0;
+        margin-bottom: 4px;
       }
 
       .toc-header {
-        padding: 12px 0px;
+        padding: 12px 16px;
         display: flex;
         align-items: center;
         width: 100%;
         font-weight: 500;
+        color: #333;
+        border-radius: 8px;
+        transition: all 0.2s ease;
       }
 
-      .toc-icon {
-        width: 20px;
-        height: 20px;
-        margin-right: 10px;
+      .toc-header:hover {
+        background: #f0f0f0;
+      }
+
+      .dropdown-arrow {
+        width: 16px;
+        height: 16px;
+        margin-right: 12px;
+        transition: transform 0.3s ease;
+        color: #666;
+      }
+
+      .dropdown-arrow.rotated {
+        transform: rotate(90deg);
       }
 
       .toc-text {
         flex-grow: 1;
-      }
-
-      .dropdown-arrow {
-        height: 16px;
-        width: 16px;
-        margin-right: 0.5rem;
-        transition: transform 0.3s ease;
+        font-weight: 500;
+        color: #333;
       }
 
       .dropdown-content {
         max-height: 0;
         overflow: hidden;
         transition: max-height 0.3s ease;
+        margin-left: 28px;
+        border-left: 2px solid #e0e0e0;
       }
 
       .dropdown-content.open {
-        max-height: 500px;
+        max-height: 1000px;
       }
 
       .dropdown-item {
-        padding: 10px 20px 10px 50px;
+        display: block;
+        padding: 10px 16px 10px 24px;
+        color: #555;
+        text-decoration: none;
+        font-size: 0.95em;
+        transition: all 0.2s ease;
+        position: relative;
+      }
+
+      .dropdown-item:hover,
+      .dropdown-item:focus {
         cursor: pointer;
-        transition: background 0.2s;
+        color: #002d65;
+        background: #f5f5f5;
+        border-radius: 6px;
       }
 
-      .dropdown-item:hover {
-        background: #efefef;
-        border-radius: 12px;
-      }
-
-      .dropdown-arrow.rotated {
-        transform: rotate(90deg);
+      .dropdown-item:hover::before {
+        background: #002d65;
       }
 
       @media (max-width: 768px) {
@@ -580,6 +610,26 @@
         }
       }
 
+      .content-header {
+        color: #002d65;
+        padding: 0 2rem;
+      }
+
+      .content-header h1 {
+        font-size: 3rem;
+        font-weight: bold;
+        margin-bottom: 20px;
+        line-height: 1.1;
+        font-family: "Unbounded", sans-serif;
+      }
+
+      .content-header p {
+        font-size: 1.1rem;
+        margin-bottom: 2rem;
+        line-height: 1.6;
+        opacity: 0.95;
+      }
+
       .section-container {
         display: flex;
         gap: 2rem;
@@ -589,30 +639,10 @@
         border-radius: 1rem;
       }
 
-      .image-grid {
-        flex: 1 1 350px;
-        display: grid;
-        grid-template-columns: repeat(2, 1fr);
-        gap: 1rem;
-      }
-
-      .image-grid img {
-        width: 100%;
-        height: auto;
-        border-radius: 1rem;
-        object-fit: cover;
-      }
-
-      .content {
-        flex: 1 1 400px;
-        display: flex;
-        flex-direction: column;
-        gap: 1rem;
-      }
-
-      .content h2 {
-        font-size: 1.8rem;
-        color: #05285e;
+      @media (min-width: 1024px) {
+        .section-container:nth-of-type(even) {
+          flex-direction: row-reverse;
+        }
       }
 
       .location {
@@ -632,7 +662,7 @@
       .content p {
         font-size: 1rem;
         line-height: 1.5;
-        color: #444;
+        color: #191919;
       }
 
       .divider {
@@ -648,27 +678,35 @@
 
       .tag {
         background: #b9d6ff;
-        color: #05285e;
+        color: #002d65;
         padding: 0.4rem 0.8rem;
         border-radius: 8px;
         font-size: 0.85rem;
         font-weight: 500;
       }
 
+      .content-features {
+        padding-left: 1rem;
+        display: flex;
+        flex-direction: column;
+        gap: 0.7rem;
+      }
+
       .buttons {
         display: flex;
-        flex-wrap: wrap;
         gap: 1rem;
         margin-top: 1rem;
+        width: 100%;
       }
 
       .btn {
-        padding: 0.75rem 1.5rem;
+        padding: 1.2rem 1.5rem;
         border-radius: 12px;
         font-size: 1rem;
         font-weight: bold;
         cursor: pointer;
         border: none;
+        width: 100%;
       }
 
       .btn.red {
@@ -701,14 +739,446 @@
         }
       }
 
-      @media (max-width: 480px) {
-        .image-grid {
-          grid-template-columns: 1fr;
-        }
-
+      @media (max-width: 768px) {
         .buttons {
           flex-direction: column;
         }
+
+        .btn {
+          padding: 1rem 1.5rem;
+        }
+      }
+
+      .footer {
+        background-color: #111111;
+        color: white;
+        padding: 2rem 1rem;
+        font-size: 14px;
+      }
+
+      .footer-container {
+        max-width: 1200px;
+        margin: 0 auto;
+      }
+
+      .footer-links {
+        display: flex;
+        justify-content: center;
+        gap: 3rem;
+        margin-bottom: 1.5rem;
+        flex-wrap: wrap;
+      }
+
+      .footer-link {
+        color: white;
+        text-decoration: none;
+        font-weight: 500;
+        transition: all 0.3s ease;
+        position: relative;
+      }
+
+      .footer-link:hover {
+        color: rgb(219, 219, 219);
+        transition: color 0.3s ease;
+      }
+
+      .footer-contact {
+        display: flex;
+        justify-content: center;
+        gap: 3rem;
+        align-items: center;
+        flex-wrap: wrap;
+      }
+
+      .contact-item {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        color: white;
+        text-decoration: none;
+        transition: all 0.3s ease;
+      }
+
+      .contact-item:hover {
+        color: rgb(219, 219, 219);
+        transition: color 0.3s ease;
+      }
+
+      .contact-icon {
+        width: 20px;
+        height: 20px;
+        fill: currentColor;
+        transition: all 0.3s ease;
+      }
+
+      @media (max-width: 768px) {
+        .footer-links {
+          gap: 1.5rem;
+          text-align: center;
+        }
+
+        .footer-contact {
+          gap: 1.5rem;
+          flex-direction: column;
+        }
+
+        .footer {
+          padding: 1.5rem 1rem;
+        }
+      }
+
+      @media (max-width: 480px) {
+        .footer-links {
+          flex-direction: column;
+          gap: 1rem;
+        }
+      }
+
+      .content-header {
+        margin-bottom: 4rem;
+      }
+
+      .content-header h1 {
+        font-size: 2.5rem;
+        color: #002d65;
+        margin-bottom: 15px;
+      }
+
+      .content-header p {
+        font-size: 1.1rem;
+        color: #333;
+      }
+
+      .venue-section {
+        margin-bottom: 50px;
+        border-bottom: 1px solid #eee;
+        padding: 0 2rem;
+        padding-bottom: 30px;
+      }
+
+      @media (max-width: 768px) {
+        .content-header {
+          padding-left: 1rem;
+          padding-right: 1rem;
+        }
+
+        .content-header h1 {
+          font-size: 2rem;
+        }
+
+        .venue-section {
+          padding: 0 1rem;
+        }
+      }
+
+      .venue-section h2 {
+        color: #002d65;
+        margin-bottom: 15px;
+      }
+
+      .venue-card {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 30px;
+        margin-bottom: 30px;
+      }
+
+      .venue-card.even {
+        flex-direction: row-reverse;
+      }
+
+      .venue-images {
+        flex: 1;
+        min-width: 300px;
+      }
+
+      .venue-details {
+        flex: 2;
+        min-width: 300px;
+      }
+
+      .venue-name {
+        font-size: 1.8rem;
+        color: #002d65;
+        margin-bottom: 10px;
+        font-family: "Unbounded", sans-serif;
+      }
+
+      .venue-location {
+        display: flex;
+        align-items: center;
+        color: #666;
+        margin-bottom: 15px;
+      }
+
+      .venue-location svg {
+        margin-right: 5px;
+      }
+
+      .venue-description {
+        margin: 0.8rem 0px;
+      }
+
+      .venue-tags {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+        margin-bottom: 20px;
+      }
+
+      .tag {
+        background: #b9d6ff;
+        color: #002d65;
+        padding: 5px 10px;
+        border-radius: 20px;
+        font-size: 0.8rem;
+        font-weight: 500;
+      }
+
+      .venue-features h3,
+      .venue-specialties h3 {
+        margin-bottom: 10px;
+        color: #002d65;
+        font-family: "Unbounded", sans-serif;
+      }
+
+      .venue-features ul {
+        padding-left: 20px;
+      }
+
+      .venue-features li {
+        margin-bottom: 8px;
+      }
+
+      .venue-buttons {
+        display: flex;
+        gap: 15px;
+        margin-top: 20px;
+      }
+
+      .btn {
+        padding: 18px 20px;
+        border-radius: 12px;
+        font-weight: 600;
+        text-decoration: none;
+        display: inline-block;
+        text-align: center;
+      }
+
+      .btn-red {
+        background: #cc0000;
+        color: white;
+      }
+
+      .btn-blue {
+        background: #002d65;
+        color: white;
+      }
+
+      .divider {
+        height: 1px;
+        background: #eee;
+        margin: 20px 0;
+      }
+
+      @media (max-width: 768px) {
+        .venue-buttons {
+          flex-direction: column;
+        }
+      }
+    </style>
+    <style>
+      .map-container {
+        position: relative;
+        border-radius: 12px;
+        overflow: hidden;
+        border: 1px solid rgba(0, 82, 155, 0.3);
+        margin-bottom: 2rem;
+      }
+
+      .map-wrapper {
+        display: flex;
+        flex-direction: row;
+      }
+
+      .leaflet-bottom {
+        display: none;
+      }
+
+      /* Map Area */
+      .map-area {
+        flex: 1;
+        position: relative;
+      }
+
+      #map {
+        width: 100%;
+        height: 400px;
+        min-height: 400px;
+      }
+
+      /* Map Controls */
+      .map-controls {
+        position: absolute;
+        top: 16px;
+        left: 16px;
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+        z-index: 1000;
+      }
+
+      .map-control {
+        background-color: white;
+        border: 1px solid #d1d5db;
+        width: 32px;
+        height: 32px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: #4b5563;
+        cursor: pointer;
+      }
+
+      .map-control:hover {
+        background-color: #f9fafb;
+      }
+
+      .map-control svg {
+        width: 16px;
+        height: 16px;
+      }
+
+      /* Layer Control */
+      .leaflet-control-layers {
+        border-radius: 4px;
+        overflow: hidden;
+        box-shadow: 0 1px 5px rgba(0, 0, 0, 0.4);
+      }
+
+      .leaflet-control-layers-toggle {
+        background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 6l9-4 9 4-9 4-9-4z"/><path d="M3 18l9-4 9 4-9 4-9-4z"/><path d="M3 12l9-4 9 4-9 4-9-4z"/></svg>') !important;
+        background-size: 16px 16px;
+        width: 32px !important;
+        height: 32px !important;
+      }
+
+      /* Venue Info Popup */
+      .venue-popup {
+        position: absolute;
+        top: 16px;
+        left: 16px;
+        background-color: white;
+        border-radius: 8px;
+        padding: 12px;
+        min-width: 192px;
+        border: 1px solid #d1d5db;
+        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1),
+          0 2px 4px -1px rgba(0, 0, 0, 0.06);
+        z-index: 1000;
+      }
+
+      .venue-popup h3 {
+        font-weight: bold;
+        color: #111827;
+        font-size: 14px;
+        margin-bottom: 8px;
+      }
+
+      .venue-rating {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        font-size: 12px;
+        color: #4b5563;
+        margin-bottom: 12px;
+      }
+
+      .venue-rating svg {
+        width: 12px;
+        height: 12px;
+        color: #f97316;
+        fill: #f97316;
+      }
+
+      .venue-badge {
+        display: inline-block;
+        padding: 2px 6px;
+        font-size: 12px;
+        border: 1px solid #f97316;
+        color: #c2410c;
+        border-radius: 4px;
+      }
+
+      .venue-location {
+        font-size: 12px;
+        color: #6b7280;
+        margin-bottom: 12px;
+      }
+
+      .venue-actions {
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+      }
+
+      @media (min-width: 640px) {
+        .venue-actions {
+          flex-direction: row;
+        }
+      }
+
+      .action-btn {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 4px 8px;
+        font-size: 12px;
+        border-radius: 4px;
+        cursor: pointer;
+      }
+
+      .primary-btn {
+        background-color: #f97316;
+        color: white;
+        border: none;
+      }
+
+      .primary-btn:hover {
+        background-color: #ea580c;
+      }
+
+      .secondary-btn {
+        background-color: transparent;
+        border: 1px solid #f97316;
+        color: #c2410c;
+      }
+
+      .secondary-btn:hover {
+        background-color: #fff7ed;
+      }
+
+      .action-btn svg {
+        width: 12px;
+        height: 12px;
+        margin-right: 4px;
+      }
+
+      .attribution {
+        position: absolute;
+        bottom: 8px;
+        left: 8px;
+        font-size: 11px;
+        color: #6b7280;
+        background-color: rgba(255, 255, 255, 0.8);
+        padding: 4px 8px;
+        border-radius: 4px;
+        z-index: 1000;
+      }
+
+      .custom-div-icon {
+        background: none !important;
+        border: none !important;
       }
     </style>
   </head>
@@ -797,22 +1267,25 @@
       </div>
     </div>
 
-    <section class="hero">
-      <div class="hero-text">
-        <p class="hero-sub">Destinations Waiting to Be Discovered</p>
-        <h1 class="hero-title">
-          THE ULTIMATE GUIDE TO NASHVILLE'S <span class="text-blue">BROAD</span
-          ><span class="text-red">WAY</span> BARS
-        </h1>
+    <section class="hero-container">
+      <div class="hero container">
+        <div class="hero-text">
+          <p class="hero-sub">Destinations Waiting to Be Discovered</p>
+          <h1 class="hero-title">
+            THE ULTIMATE GUIDE TO NASHVILLE'S
+            <span class="text-blue">BROAD</span
+            ><span class="text-red">WAY</span> BARS
+          </h1>
+        </div>
+        <a
+          href="https://book.peek.com/s/68195431-12b6-4bed-9bf9-a5c919cd4561/qxdqx?gaClientId=1634138304.1751451774&gaSessionId=1751486043&_gl=1*tm2c56*_gcl_au*NzgyNjEwMDI1LjE3NTE0NTE3NzQ.*_ga*MTYzNDEzODMwNC4xNzUxNDUxNzc0*_ga_G9R0HRFNSE*czE3NTE0ODYwNDMkbzIkZzEkdDE3NTE0ODYwNjgkajM1JGwwJGgw"
+          class="hero-action"
+          >Book Now</a
+        >
       </div>
-      <a
-        href="https://book.peek.com/s/68195431-12b6-4bed-9bf9-a5c919cd4561/qxdqx?gaClientId=1634138304.1751451774&gaSessionId=1751486043&_gl=1*tm2c56*_gcl_au*NzgyNjEwMDI1LjE3NTE0NTE3NzQ.*_ga*MTYzNDEzODMwNC4xNzUxNDUxNzc0*_ga_G9R0HRFNSE*czE3NTE0ODYwNDMkbzIkZzEkdDE3NTE0ODYwNjgkajM1JGwwJGgw"
-        class="hero-action"
-        >Book Now</a
-      >
     </section>
 
-    <section class="features">
+    <section class="features container">
       <div class="feature-box">
         <div class="feature-icon">
           <svg
@@ -925,12 +1398,56 @@
       </div>
 
       <div class="map-container">
-        <iframe
-          width="100%"
-          height="100%"
-          src="https://www.openstreetmap.org/export/embed.html?bbox=7.914978861808778%2C4.6365529581861%2C7.919484972953797%2C4.640621909232194&amp;layer=cyclemap"
-          style="border: none"
-        ></iframe>
+        <div class="map-wrapper">
+          <!-- Map Area -->
+          <div class="map-area">
+            <div id="map"></div>
+
+            <!-- Map Controls -->
+            <div class="map-controls">
+              <button class="map-control" id="zoom-in">
+                <svg
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                >
+                  <path d="M12 5v14m-7-7h14" />
+                </svg>
+              </button>
+              <button class="map-control" id="zoom-out">
+                <svg
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                >
+                  <path d="M5 12h14" />
+                </svg>
+              </button>
+              <button class="map-control" id="reset-view">
+                <svg
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                >
+                  <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" />
+                </svg>
+              </button>
+            </div>
+
+            <!-- Venue Info Popup (initially hidden) -->
+            <div
+              class="venue-popup"
+              id="venue-popup"
+              style="display: none"
+            ></div>
+          </div>
+        </div>
+
+        <!-- Attribution -->
+        <div class="attribution">© OpenStreetMap contributors</div>
       </div>
 
       <div class="cta-button-container">
@@ -944,243 +1461,1477 @@
 
       <div class="content-section">
         <div class="table-of-contents">
-          <h2>Table of Content</h2>
-
-          <div class="toc-item has-dropdown">
-            <div class="toc-header" onclick="toggleDropdown(this)">
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke-width="2.5"
-                stroke="currentColor"
-                class="dropdown-arrow"
-              >
-                <path
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                  d="m8.25 4.5 7.5 7.5-7.5 7.5"
-                />
-              </svg>
-
-              <span class="toc-text">Celebrity Bars</span>
-            </div>
-            <div class="dropdown-content">
-              <div
-                class="dropdown-item"
-                onclick="scrollToSection('morgan-wallen-kitchen')"
-              >
-                Morgan Wallen's This Bar + Kitchen
-              </div>
-              <div
-                class="dropdown-item"
-                onclick="scrollToSection('blake-shelton-ole-red')"
-              >
-                Blake Shelton’s Ole Red
-              </div>
-              <div
-                class="dropdown-item"
-                onclick="scrollToSection('jason-aldean-kitchen')"
-              >
-                Jason Aldean’s Kitchen + Rooftop Bar
-              </div>
-              <div
-                class="dropdown-item"
-                onclick="scrollToSection('bell-bottom-up')"
-              >
-                Bell Bottoms Up
-              </div>
-              <div
-                class="dropdown-item"
-                onclick="scrollToSection('dierks-bentley-whisky-row')"
-              >
-                Dierks Bentley’s Whiskey Row
-              </div>
-              <div
-                class="dropdown-item"
-                onclick="scrollToSection('aj-good-time-bar')"
-              >
-                AJ’s Good Time Bar
-              </div>
-              <div
-                class="dropdown-item"
-                onclick="scrollToSection('eric-church-chief')"
-              >
-                Eric Church's Chief's
-              </div>
-              <div
-                class="dropdown-item"
-                onclick="scrollToSection('jbj-nashville')"
-              >
-                JBJ’s Nashville
-              </div>
-              <div
-                class="dropdown-item"
-                onclick="scrollToSection('friends-in-low-places')"
-              >
-                Friends in Low Places (Garth Brooks)
-              </div>
-              <div class="dropdown-item" onclick="scrollToSection('fgl')">
-                FGL House
-              </div>
-            </div>
-          </div>
-
-          <div class="toc-item has-dropdown">
-            <div class="toc-header" onclick="toggleDropdown(this)">
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke-width="2.5"
-                stroke="currentColor"
-                class="dropdown-arrow"
-              >
-                <path
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                  d="m8.25 4.5 7.5 7.5-7.5 7.5"
-                />
-              </svg>
-
-              <span class="toc-text">Classic Honky-Tonks in Nashville</span>
-            </div>
-            <div class="dropdown-content">
-              <div
-                class="dropdown-item"
-                onclick="scrollToSection('robert-western-world')"
-              >
-                Robert’s Western World
-              </div>
-              <div
-                class="dropdown-item"
-                onclick="scrollToSection('the-stage-on-broadway')"
-              >
-                The Stage on Broadway
-              </div>
-              <div
-                class="dropdown-item"
-                onclick="scrollToSection('honky-tonk-central')"
-              >
-                Honky Tonk Central
-              </div>
-              <div
-                class="dropdown-item"
-                onclick="scrollToSection('legends-corner')"
-              >
-                Legends Corner
-              </div>
-              <div
-                class="dropdown-item"
-                onclick="scrollToSection('tootsie-orchid-lounge')"
-              >
-                Tootsie's Orchid Lounge
-              </div>
-              <div
-                class="dropdown-item"
-                onclick="scrollToSection('layla-honky-tonk')"
-              >
-                Layla’s Honky Tonk
-              </div>
-              <div
-                class="dropdown-item"
-                onclick="scrollToSection('eric-church-chief')"
-              >
-                Eric Church's Chief's
-              </div>
-              <div
-                class="dropdown-item"
-                onclick="scrollToSection('jbj-nashville')"
-              >
-                JBJ’s Nashville
-              </div>
-              <div
-                class="dropdown-item"
-                onclick="scrollToSection('friends-in-low-places')"
-              >
-                Friends in Low Places (Garth Brooks)
-              </div>
-              <div class="dropdown-item" onclick="scrollToSection('fgl')">
-                FGL House
-              </div>
-            </div>
+          <h2>Table of Contents</h2>
+          <div id="toc-container">
+            <!-- Table of contents will be dynamically inserted here -->
           </div>
         </div>
       </div>
     </section>
 
-    <section class="section-container container">
-      <div class="image-grid">
-        <img
-          src="https://via.placeholder.com/300x200?text=Image+1"
-          alt="Bar Image 1"
-        />
-        <img
-          src="https://via.placeholder.com/300x200?text=Image+2"
-          alt="Bar Image 2"
-        />
-        <img
-          src="https://via.placeholder.com/300x200?text=Image+3"
-          alt="Bar Image 3"
-        />
-        <img
-          src="https://via.placeholder.com/300x200?text=Image+4"
-          alt="Bar Image 4"
-        />
-      </div>
-
-      <div class="content">
-        <h2>Morgan Wallen's This Bar + Kitchen, June 2024</h2>
-
-        <div class="location">
-          <svg viewBox="0 0 24 24">
-            <path
-              d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5S10.62 6.5 12 6.5s2.5 1.12 2.5 2.5S13.38 11.5 12 11.5z"
-            />
-          </svg>
-          107 4th Avenue North, Nashville, TN
-        </div>
-
-        <p>
-          Morgan Wallen's This Bar + Kitchen spans six stories with rooftop
-          stages, personal memorabilia, and Southern-style comfort food.
-          <a href="#" style="color: #05285e; text-decoration: underline"
-            >see more.</a
+    <div id="venues-container" class="container">
+      <!-- Venue sections will be dynamically inserted here -->
+    </div>
+    <footer class="footer" id="footer">
+      <div class="footer-container">
+        <div class="footer-links">
+          <a
+            href="https://www.rowdybus.com/cancellation-policy/"
+            class="footer-link"
+            data-link="cancellation"
+            >Cancellation Policy</a
           >
-        </p>
-
-        <div class="divider"></div>
-
-        <h3>What Makes It Special</h3>
-        <div class="tags">
-          <div class="tag">Personal Memorabilia</div>
-          <div class="tag">Family Recipes</div>
-          <div class="tag">Six-Story Experience</div>
-          <div class="tag">East Tennessee Heritage</div>
+          <a
+            href="https://www.rowdybus.com/contact-us/"
+            class="footer-link"
+            data-link="contact"
+            >Contact Us</a
+          >
+          <a
+            href="https://www.rowdybus.com/privacy-policy/"
+            class="footer-link"
+            data-link="privacy"
+            >Privacy Policy</a
+          >
         </div>
 
-        <div class="divider"></div>
+        <div class="footer-contact">
+          <a href="tel:(615)212-8869" class="contact-item" id="phone-contact">
+            <svg class="contact-icon" viewBox="0 0 24 24">
+              <path
+                d="M20.01 15.38c-1.23 0-2.42-.2-3.53-.56-.35-.12-.74-.03-1.01.24l-1.57 1.97c-2.83-1.35-5.48-3.9-6.89-6.83l1.95-1.66c.27-.28.35-.67.24-1.02-.37-1.11-.56-2.3-.56-3.53 0-.54-.45-.99-.99-.99H4.19C3.65 3 3 3.24 3 3.99 3 13.28 10.73 21 20.01 21c.71 0 .99-.63.99-1.18v-3.45c0-.54-.45-.99-.99-.99z"
+              />
+            </svg>
+            <span>(615) 212-8869</span>
+          </a>
 
-        <h3>Unique Features</h3>
-        <ul class="features">
-          <li>
-            Three live music stages and an open-air rooftop create a dynamic,
-            multi-level experience unlike smaller venues.
-          </li>
-          <li>
-            Memorabilia from Wallen’s childhood and career showcases his East
-            Tennessee heritage.
-          </li>
-        </ul>
-
-        <div class="buttons">
-          <button class="btn red">Get Direction</button>
-          <button class="btn blue">Book Bus Tour</button>
+          <a
+            href="mailto:info@rowdybus.com"
+            class="contact-item"
+            id="email-contact"
+          >
+            <svg class="contact-icon" viewBox="0 0 24 24">
+              <path
+                d="M20 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z"
+              />
+            </svg>
+            <span>info@rowdybus.com</span>
+          </a>
         </div>
       </div>
-    </section>
+    </footer>
 
-    <footer></footer>
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <script
+      src="https://static.elfsight.com/platform/platform.js"
+      async
+    ></script>
+
+    <script>
+      // Venue data
+      const mapVenues = [
+        {
+          id: 1,
+          name: "Blake Shelton's Ole Red",
+          category: "celebrity",
+          rating: 4.8,
+          location: "300 Broadway",
+          coordinates: [-86.7767, 36.1612],
+        },
+        {
+          id: 2,
+          name: "Bell Bottoms Up",
+          category: "all",
+          rating: 4.5,
+          location: "120 3rd Ave South",
+          coordinates: [-86.7767, 36.1598],
+        },
+        {
+          id: 3,
+          name: "Dierks Bentley's Whiskey Row",
+          category: "celebrity",
+          rating: 4.7,
+          location: "400 Broadway",
+          coordinates: [-86.7756, 36.1612],
+        },
+        {
+          id: 4,
+          name: "Jason Aldean's Kitchen",
+          category: "celebrity",
+          rating: 4.9,
+          location: "307 Broadway",
+          coordinates: [-86.7763, 36.1612],
+        },
+        {
+          id: 5,
+          name: "Rippy's Bar and Grill",
+          category: "all",
+          rating: 4.4,
+          location: "429 Broadway",
+          coordinates: [-86.7748, 36.1612],
+        },
+        {
+          id: 6,
+          name: "Acme Feed & Seed",
+          category: "all",
+          rating: 4.6,
+          location: "101 Broadway",
+          coordinates: [-86.7778, 36.1612],
+        },
+        {
+          id: 7,
+          name: "AJ's Good Time Bar",
+          category: "celebrity",
+          rating: 4.5,
+          location: "421 Broadway",
+          coordinates: [-86.7749, 36.1612],
+        },
+        {
+          id: 8,
+          name: "Morgan Wallen's This Bar",
+          category: "celebrity",
+          rating: 4.8,
+          location: "107 4th Avenue North",
+          coordinates: [-86.7776, 36.1625],
+        },
+        {
+          id: 9,
+          name: "Eric Church's Chief's",
+          category: "celebrity",
+          rating: 4.6,
+          location: "200 Broadway",
+          coordinates: [-86.7771, 36.1612],
+        },
+        {
+          id: 10,
+          name: "Honky Tonk Central",
+          category: "classic",
+          rating: 4.5,
+          location: "329 Broadway",
+          coordinates: [-86.776, 36.1612],
+        },
+        {
+          id: 11,
+          name: "JBJ's Nashville",
+          category: "celebrity",
+          rating: 4.4,
+          location: "405 Broadway",
+          coordinates: [-86.7755, 36.1612],
+        },
+        {
+          id: 12,
+          name: "The Valentine",
+          category: "speakeasy",
+          rating: 4.7,
+          location: "312 Broadway",
+          coordinates: [-86.7762, 36.1612],
+        },
+        {
+          id: 13,
+          name: "Nashville Underground",
+          category: "all",
+          rating: 4.5,
+          location: "105 Broadway",
+          coordinates: [-86.7777, 36.1612],
+        },
+        {
+          id: 14,
+          name: "Nudie's Honky Tonk",
+          category: "all",
+          rating: 4.3,
+          location: "409 Broadway",
+          coordinates: [-86.7754, 36.1612],
+        },
+        {
+          id: 15,
+          name: "Friends in Low Places",
+          category: "celebrity",
+          rating: 4.6,
+          location: "411 Broadway",
+          coordinates: [-86.7753, 36.1612],
+        },
+        {
+          id: 16,
+          name: "Redneck Riviera",
+          category: "all",
+          rating: 4.4,
+          location: "208 Broadway",
+          coordinates: [-86.777, 36.1612],
+        },
+        {
+          id: 17,
+          name: "Barstool Nashville",
+          category: "all",
+          rating: 4.3,
+          location: "219 Broadway",
+          coordinates: [-86.7769, 36.1612],
+        },
+        {
+          id: 18,
+          name: "Kid Rock's Big Honky Tonk",
+          category: "celebrity",
+          rating: 4.5,
+          location: "221 Broadway",
+          coordinates: [-86.7768, 36.1612],
+        },
+        {
+          id: 19,
+          name: "Miranda Lambert's Casa Rosa",
+          category: "celebrity",
+          rating: 4.7,
+          location: "308 Broadway",
+          coordinates: [-86.7763, 36.1612],
+        },
+        {
+          id: 20,
+          name: "Hank Williams Jr.'s Boogie Bar",
+          category: "celebrity",
+          rating: 4.4,
+          location: "419 Broadway",
+          coordinates: [-86.775, 36.1612],
+        },
+        {
+          id: 21,
+          name: "Robert's Western World",
+          category: "classic",
+          rating: 4.6,
+          location: "416B Broadway",
+          coordinates: [-86.7751, 36.1612],
+        },
+        {
+          id: 22,
+          name: "Tootsie's Orchid Lounge",
+          category: "classic",
+          rating: 4.8,
+          location: "422 Broadway",
+          coordinates: [-86.775, 36.1612],
+        },
+        {
+          id: 23,
+          name: "The Stage on Broadway",
+          category: "classic",
+          rating: 4.5,
+          location: "412 Broadway",
+          coordinates: [-86.7752, 36.1612],
+        },
+        {
+          id: 24,
+          name: "Layla's Honky Tonk",
+          category: "classic",
+          rating: 4.4,
+          location: "418 Broadway",
+          coordinates: [-86.7751, 36.1612],
+        },
+        {
+          id: 25,
+          name: "Luke Combs' Category 10",
+          category: "celebrity",
+          rating: 4.7,
+          location: "120 2nd Ave North",
+          coordinates: [-86.7775, 36.162],
+        },
+        {
+          id: 26,
+          name: "Legends Corner",
+          category: "classic",
+          rating: 4.3,
+          location: "428 Broadway",
+          coordinates: [-86.7748, 36.1612],
+        },
+        {
+          id: 27,
+          name: "Jelly Roll's Goodnight Nashville",
+          category: "celebrity",
+          rating: 4.6,
+          location: "209 Broadway",
+          coordinates: [-86.777, 36.1612],
+        },
+        {
+          id: 28,
+          name: "Tanya Tucker's Tequila Cantina",
+          category: "celebrity",
+          rating: 4.5,
+          location: "409 Broadway",
+          coordinates: [-86.7754, 36.1612],
+        },
+        {
+          id: 29,
+          name: "Luke Bryan's 32 Bridge",
+          category: "celebrity",
+          rating: 4.8,
+          location: "301 Broadway",
+          coordinates: [-86.7764, 36.1612],
+        },
+        {
+          id: 30,
+          name: "Dirty Little Secret",
+          category: "speakeasy",
+          rating: 4.6,
+          location: "210 Printers Alley",
+          coordinates: [-86.7765, 36.1608],
+        },
+        {
+          id: 31,
+          name: "Red Phone Booth",
+          category: "speakeasy",
+          rating: 4.7,
+          location: "136 Rosa L. Parks Blvd",
+          coordinates: [-86.779, 36.1635],
+        },
+        {
+          id: 32,
+          name: "Show Pony",
+          category: "all",
+          rating: 4.5,
+          location: "121 3rd Ave South",
+          coordinates: [-86.7775, 36.1595],
+        },
+        {
+          id: 33,
+          name: "Hidden Bar – Noelle Hotel",
+          category: "speakeasy",
+          rating: 4.8,
+          location: "200 4th Ave N",
+          coordinates: [-86.7773, 36.162],
+        },
+        {
+          id: 34,
+          name: "Skull's Rainbow Room",
+          category: "speakeasy",
+          rating: 4.4,
+          location: "225 Printers Alley",
+          coordinates: [-86.7764, 36.1608],
+        },
+        {
+          id: 35,
+          name: "Black Rabbit",
+          category: "speakeasy",
+          rating: 4.6,
+          location: "218 3rd Ave N",
+          coordinates: [-86.7774, 36.1618],
+        },
+      ];
+
+      // Initialize the map
+      let map;
+      let markers = [];
+      let hoveredVenueId = null;
+      let currentBaseLayer;
+
+      document.addEventListener("DOMContentLoaded", function () {
+        // Initialize map with better starting view
+        map = L.map("map", {
+          center: [36.1612, -86.7767],
+          zoom: 16,
+          zoomControl: false,
+          scrollWheelZoom: false,
+        });
+
+        // Define multiple base layers
+        const osmLayer = L.tileLayer(
+          "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
+          {
+            attribution:
+              '© <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
+            maxZoom: 19,
+            detectRetina: true,
+          }
+        );
+
+        const osmHotLayer = L.tileLayer(
+          "https://{s}.tile.openstreetmap.fr/hot/{z}/{x}/{y}.png",
+          {
+            attribution:
+              '© <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors, Tiles style by <a href="https://www.hotosm.org/" target="_blank">Humanitarian OpenStreetMap Team</a>',
+            maxZoom: 19,
+            detectRetina: true,
+          }
+        );
+
+        const satelliteLayer = L.tileLayer(
+          "https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}",
+          {
+            attribution:
+              'Tiles © <a href="https://services.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer">ArcGIS</a>',
+            maxZoom: 19,
+            detectRetina: true,
+          }
+        );
+
+        // Add base layers to map
+        osmHotLayer.addTo(map);
+        currentBaseLayer = osmHotLayer;
+
+        // Add layer control
+        const baseLayers = {
+          "Street Map": osmLayer,
+          "Humanitarian OSM": osmHotLayer,
+          Satellite: satelliteLayer,
+        };
+
+        L.control
+          .layers(baseLayers, null, {
+            position: "topright",
+            collapsed: false,
+          })
+          .addTo(map);
+
+        // Add markers for each venue with custom styling
+        mapVenues.forEach((venue) => {
+          const markerColor = getMarkerColor(venue.category);
+
+          const markerHtml = `
+          <div style="
+            width: 80px;
+            height: 24px;
+            background: ${markerColor};
+            color: white;
+            font-size: 9px;
+            font-weight: bold;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 4px;
+            cursor: pointer;
+            text-align: center;
+            padding: 2px 4px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.3);
+            border: 1px solid ${darkenColor(markerColor, 20)};
+          ">
+            ${
+              venue.name.length > 12
+                ? venue.name.substring(0, 12) + "..."
+                : venue.name.toUpperCase()
+            }
+          </div>
+        `;
+
+          const customIcon = L.divIcon({
+            html: markerHtml,
+            className: "custom-div-icon",
+            iconSize: [80, 24],
+            iconAnchor: [40, 12],
+          });
+
+          const marker = L.marker(
+            [venue.coordinates[1], venue.coordinates[0]],
+            {
+              icon: customIcon,
+              riseOnHover: true,
+            }
+          ).addTo(map);
+
+          // Store marker reference
+          markers.push({
+            id: venue.id,
+            marker: marker,
+          });
+
+          // Add event listeners
+          marker.on("mouseover", () => {
+            hoveredVenueId = venue.id;
+            updateVenuePopup();
+          });
+
+          marker.on("mouseout", () => {
+            hoveredVenueId = null;
+            updateVenuePopup();
+          });
+
+          marker.on("click", () => {
+            hoveredVenueId = hoveredVenueId === venue.id ? null : venue.id;
+            updateVenuePopup();
+          });
+        });
+
+        // Map controls
+        document.getElementById("zoom-in").addEventListener("click", () => {
+          map.zoomIn();
+        });
+
+        document.getElementById("zoom-out").addEventListener("click", () => {
+          map.zoomOut();
+        });
+
+        document.getElementById("reset-view").addEventListener("click", () => {
+          map.setView([36.1612, -86.7767], 16);
+        });
+
+        // Listen for layer changes
+        map.on("baselayerchange", function (e) {
+          currentBaseLayer = e.layer;
+        });
+      });
+
+      // Helper function to get marker color based on category
+      function getMarkerColor(category) {
+        switch (category) {
+          case "celebrity":
+            return "#FF5733"; // Orange-red
+          case "classic":
+            return "#3388FF"; // Blue
+          case "speakeasy":
+            return "#9B59B6"; // Purple
+          default:
+            return "#2ECC71"; // Green
+        }
+      }
+
+      // Helper function to darken a color
+      function darkenColor(color, percent) {
+        // Convert hex to RGB
+        let r = parseInt(color.substring(1, 3), 16);
+        let g = parseInt(color.substring(3, 5), 16);
+        let b = parseInt(color.substring(5, 7), 16);
+
+        // Darken each component
+        r = Math.floor((r * (100 - percent)) / 100);
+        g = Math.floor((g * (100 - percent)) / 100);
+        b = Math.floor((b * (100 - percent)) / 100);
+
+        // Convert back to hex
+        return `#${((1 << 24) + (r << 16) + (g << 8) + b)
+          .toString(16)
+          .slice(1)}`;
+      }
+
+      // Update venue popup based on hovered venue
+      function updateVenuePopup() {
+        const popup = document.getElementById("venue-popup");
+
+        if (!hoveredVenueId) {
+          popup.style.display = "none";
+          return;
+        }
+
+        const venue = mapVenues.find((v) => v.id === hoveredVenueId);
+        if (!venue) return;
+
+        // Get category display name
+        let categoryDisplay;
+        switch (venue.category) {
+          case "celebrity":
+            categoryDisplay = "Celebrity";
+            break;
+          case "classic":
+            categoryDisplay = "Classic";
+            break;
+          case "speakeasy":
+            categoryDisplay = "Speakeasy";
+            break;
+          default:
+            categoryDisplay = "Mixed";
+        }
+
+        // Create popup content
+        popup.innerHTML = `
+        <h3>${venue.name}</h3>
+        <div class="venue-rating">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
+          </svg>
+          <span>${venue.rating}</span>
+          <span class="venue-badge">${categoryDisplay}</span>
+        </div>
+        <p class="venue-location">${venue.location}</p>
+        <div class="venue-actions">
+          <button class="action-btn primary-btn" onclick="window.open('https://www.google.com/maps/dir/?api=1&destination=${
+            venue.coordinates[1]
+          },${venue.coordinates[0]}&destination_place_id=${encodeURIComponent(
+          venue.name
+        )}', '_blank')">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6m4-3h6v6m-11 5L21 3"/>
+            </svg>
+            Directions
+          </button>
+          <button class="action-btn secondary-btn" onclick="window.open('tel:+16152128869', '_self')">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/>
+            </svg>
+            Book Tour
+          </button>
+        </div>
+      `;
+
+        popup.style.display = "block";
+      }
+    </script>
+
+    <script>
+      // Data from your provided arrays
+      const categories = [
+        {
+          id: "celebrity-bars",
+          title: "Celebrity Bars in Nashville",
+          subtitle:
+            "Ever wondered where your favorite country stars party in Nashville? These celebrity-owned bars aren't just name-branded—each one brings its owner's personality to life with rooftop stages, signature drinks, and Southern flair. Whether you're chasing rooftop views, hoping to spot a country legend, or just looking to dance 'til 3 AM, these hotspots are where Music City meets star power. From Morgan Wallen's brand-new mega-bar to Blake Shelton's honky-tonk haven, here's where the legends hang their hats—and where you should too.",
+          venues: [
+            {
+              id: "blake-sheltons-ole-red",
+              name: "Blake Shelton's Ole Red",
+              category: "Celebrity Bar",
+              description:
+                "Ole Red is Blake Shelton's high-energy honky-tonk with rooftop views, surprise Voice performances, and a two-story LED stage. You won't find another bar in Nashville where 'The Voice' auditions are held in-house.",
+              image: "/placeholder.svg?height=400&width=600",
+              location: "300 Broadway, Nashville, TN",
+              instagramEmbed: `<div class="elfsight-app-2e8707bb-01fe-41bc-9ab6-9e0b4a7eb2c9" data-elfsight-app-lazy></div>`,
+              features: [
+                "Hosts 'The Voice' auditions, showcasing new talent on a professional stage.",
+                "Rooftop bar, The Lookout, offers panoramic views of Lower Broadway.",
+                "Signature dishes like fried green tomatoes reflect Shelton's Oklahoma roots.",
+                "Lunchtime performances on weekdays provide a relaxed music experience.",
+              ],
+              vibe: "High-Energy Celebrity",
+              priceRange: "$$$",
+              bestTime: "Evening & Late Night",
+              specialties: [
+                "The Voice Auditions",
+                "Rooftop Views",
+                "Celebrity Sightings",
+                "Oklahoma Cuisine",
+              ],
+            },
+            {
+              id: "dierks-bentleys-whiskey-row",
+              name: "Dierks Bentley's Whiskey Row",
+              category: "Celebrity Bar",
+              description:
+                "Whiskey Row brings Dierks Bentley's Arizona bar concept to Nashville with a rooftop bar, live music, and whiskey-focused cocktails.",
+              image: "/placeholder.svg?height=400&width=600",
+              location: "400 Broadway, Nashville, TN",
+              instagramEmbed: `<div class="elfsight-app-9e231aa3-8cc8-49ca-858d-7cf689359ec9" data-elfsight-app-lazy></div>`,
+              features: [
+                "Three-story venue with rooftop views of Broadway",
+                "Extensive whiskey selection and specialty cocktails",
+                "Live music daily with both local and touring acts",
+                "Modern country aesthetic with rustic touches",
+              ],
+              vibe: "Modern Country",
+              priceRange: "$$$",
+              bestTime: "Evening",
+              specialties: [
+                "Whiskey Selection",
+                "Rooftop Views",
+                "Live Music",
+                "Modern Country Vibe",
+              ],
+            },
+            {
+              id: "jason-aldeans-kitchen",
+              name: "Jason Aldean's Kitchen + Rooftop Bar",
+              category: "Celebrity Bar",
+              description:
+                "Jason Aldean's four-story bar features a rooftop with panoramic views, Southern cuisine, and live music daily.",
+              image: "/placeholder.svg?height=400&width=600",
+              location: "307 Broadway, Nashville, TN",
+              instagramEmbed: `<div class="elfsight-app-19267f2f-e492-48f1-ae87-4e51c7c149a3" data-elfsight-app-lazy></div>`,
+              features: [
+                "Massive rooftop with views of the Cumberland River",
+                "Southern-inspired menu with Aldean's favorite dishes",
+                "Multiple bars and stages across four floors",
+                "Modern country music focus",
+              ],
+              vibe: "Southern Party",
+              priceRange: "$$$",
+              bestTime: "Night",
+              specialties: [
+                "Rooftop Views",
+                "Southern Cuisine",
+                "Multi-Level Venue",
+                "Country Party Vibe",
+              ],
+            },
+            {
+              id: "ajs-good-time-bar",
+              name: "AJ's Good Time Bar",
+              category: "Celebrity Bar",
+              description:
+                "Alan Jackson's honky-tonk features three floors of live music, a rooftop deck, and classic country memorabilia.",
+              image: "/placeholder.svg?height=400&width=600",
+              location: "421 Broadway, Nashville, TN",
+              instagramEmbed: `<div class="elfsight-app-b4672c8b-af2c-482f-86a2-31cacf52d0ee" data-elfsight-app-lazy></div>`,
+              features: [
+                "Rooftop patio with Broadway views",
+                "Classic country music focus",
+                "Alan Jackson memorabilia throughout",
+                "Three floors of live music",
+              ],
+              vibe: "Classic Country",
+              priceRange: "$$",
+              bestTime: "Evening",
+              specialties: [
+                "Classic Country",
+                "Rooftop Views",
+                "Alan Jackson Memorabilia",
+                "Three Floors of Music",
+              ],
+            },
+            {
+              id: "morgan-wallens-this-bar",
+              name: "Morgan Wallen's This Bar + Kitchen",
+              category: "Celebrity Bar",
+              description:
+                "Morgan Wallen's This Bar + Kitchen spans six stories with rooftop stages, personal memorabilia, and Southern-style comfort food. Nowhere else on Broadway will you find childhood mementos from the chart-topper himself, like Little League jerseys and guitars.",
+              image: "/placeholder.svg?height=400&width=600",
+              location: "107 4th Avenue North, Nashville, TN",
+              instagramEmbed: `<div class="elfsight-app-c69c4fe0-93d5-4ba3-ac7f-6324477ea8ca" data-elfsight-app-lazy></div>`,
+              features: [
+                "Three live music stages and an open-air rooftop create a dynamic, multi-level experience unlike smaller venues.",
+                "Memorabilia from Wallen's childhood and career showcases his East Tennessee heritage.",
+                "Menu features family recipes, like Mama Wallen's meatloaf, blending tradition with Southern staples.",
+                "Rooftop during CMA Fest offers exclusive skyline views and lively performances.",
+              ],
+              vibe: "Personal & Authentic",
+              priceRange: "$$$",
+              bestTime: "Evening",
+              specialties: [
+                "Personal Memorabilia",
+                "Family Recipes",
+                "Six-Story Experience",
+                "East Tennessee Heritage",
+              ],
+            },
+            {
+              id: "eric-churchs-chiefs",
+              name: "Eric Church's Chief's",
+              category: "Celebrity Bar",
+              description:
+                "Eric Church's six-story venue features multiple bars, stages, and a rooftop with panoramic views of Broadway.",
+              image: "/placeholder.svg?height=400&width=600",
+              location: "200 Broadway, Nashville, TN",
+              instagramEmbed: `<div class="elfsight-app-95558311-e57a-4555-94d3-6fbcd963b4a5" data-elfsight-app-lazy></div>`,
+              features: [
+                "Six floors of entertainment including multiple stages",
+                "Rooftop bar with Broadway views",
+                "Eric Church memorabilia and personal touches",
+                "Southern-inspired food and cocktails",
+              ],
+              vibe: "Authentic Country",
+              priceRange: "$$$",
+              bestTime: "Night",
+              specialties: [
+                "Multi-Level Experience",
+                "Eric Church Memorabilia",
+                "Rooftop Views",
+                "Southern Hospitality",
+              ],
+            },
+            {
+              id: "luke-combs-category-10",
+              name: "Luke Combs' Category 10",
+              category: "Celebrity Bar",
+              description:
+                "Luke Combs' bar features a tropical storm theme with multiple levels, live music, and Combs' personal touches.",
+              image: "/placeholder.svg?height=400&width=600",
+              location: "120 2nd Ave North, Nashville, TN",
+              instagramEmbed: `<div class="elfsight-app-b2355485-626f-4710-934a-4aa3fed0f6dd" data-elfsight-app-lazy></div>`,
+              features: [
+                "Hurricane-themed decor and cocktails",
+                "Multiple levels with different vibes",
+                "Luke Combs memorabilia throughout",
+                "Live music daily",
+              ],
+              vibe: "Tropical Storm",
+              priceRange: "$$$",
+              bestTime: "Evening",
+              specialties: [
+                "Hurricane Theme",
+                "Luke Combs Memorabilia",
+                "Multi-Level Experience",
+                "Live Music",
+              ],
+            },
+            {
+              id: "luke-bryans-32-bridge",
+              name: "Luke Bryan's 32 Bridge",
+              category: "Celebrity Bar",
+              description:
+                "Luke Bryan's multi-level bar features a rooftop, multiple stages, and Southern-inspired cuisine.",
+              image: "/placeholder.svg?height=400&width=600",
+              location: "301 Broadway, Nashville, TN",
+              instagramEmbed: `<div class="elfsight-app-f15fc066-b8cd-4165-b9f1-a3ab860517ce" data-elfsight-app-lazy></div>`,
+              features: [
+                "Four floors including a rooftop bar",
+                "Multiple stages with live music",
+                "Southern-inspired menu",
+                "Luke Bryan memorabilia",
+              ],
+              vibe: "Southern Party",
+              priceRange: "$$$",
+              bestTime: "Night",
+              specialties: [
+                "Multi-Level Venue",
+                "Rooftop Views",
+                "Southern Cuisine",
+                "Luke Bryan Memorabilia",
+              ],
+            },
+          ],
+        },
+        {
+          id: "classic-honky-tonks",
+          title: "Classic Honky-Tonks in Nashville",
+          subtitle:
+            "These are the venues that made Broadway famous - authentic, historic, and full of country soul.",
+          venues: [
+            {
+              id: "roberts-western-world",
+              name: "Robert's Western World",
+              category: "Classic Honky-Tonk",
+              description:
+                "Robert's Western World is a Nashville classic with twangy country, fried bologna, and western boots for sale. No other spot on Broadway lets you buy boots in the back and break them in on the dance floor up front.",
+              image: "/placeholder.svg?height=400&width=600",
+              location: "416B Broadway, Nashville, TN",
+              instagramEmbed: `<div class="elfsight-app-ade54be9-e1c6-46dd-9448-7e53c5b49cb1" data-elfsight-app-lazy></div>`,
+              features: [
+                "Known as the 'Home of Traditional Country Music,' it plays classic country exclusively.",
+                "Recession Special (burger, fries, PBR for $6) offers a budget-friendly deal.",
+                "Western boots and memorabilia create an authentic cowboy aesthetic.",
+                "Early arrivals catch BR549's iconic performances up close.",
+              ],
+              vibe: "Authentic Western",
+              priceRange: "$",
+              bestTime: "Early Evening",
+              specialties: [
+                "Traditional Country Only",
+                "Fried Bologna",
+                "Western Gear",
+                "Recession Special",
+              ],
+            },
+            {
+              id: "tootsies-orchid-lounge",
+              name: "Tootsie's Orchid Lounge",
+              category: "Classic Honky-Tonk",
+              description:
+                "Tootsie's Orchid Lounge is a historic honky-tonk that's been serving country music fans since 1960, known for its purple exterior and legendary performances.",
+              image: "/placeholder.svg?height=400&width=600",
+              location: "422 Broadway, Nashville, TN",
+              instagramEmbed: `<div class="elfsight-app-468c40c3-2efa-4b14-9788-7cbe7d446501" data-elfsight-app-lazy></div>`,
+              features: [
+                "Historic venue that launched many country music careers",
+                "Famous purple exterior and memorabilia-covered walls",
+                "Multiple levels with different music experiences",
+                "Late-night jam sessions often feature surprise guests",
+              ],
+              vibe: "Historic & Legendary",
+              priceRange: "$$",
+              bestTime: "Night",
+              specialties: [
+                "Country Music History",
+                "Memorabilia-Covered Walls",
+                "Late-Night Jams",
+                "Historic Venue",
+              ],
+            },
+            {
+              id: "honky-tonk-central",
+              name: "Honky Tonk Central",
+              category: "Classic Honky-Tonk",
+              description:
+                "Three floors of non-stop country music make Honky Tonk Central one of Broadway's most popular destinations.",
+              image: "/placeholder.svg?height=400&width=600",
+              location: "329 Broadway, Nashville, TN 37201",
+              instagramEmbed: `<div class="elfsight-app-3469c881-d396-4810-ba9e-9f04d35b3035" data-elfsight-app-lazy></div>`,
+              features: [
+                "Three floors each with its own live music",
+                "Open from 10am to 3am daily",
+                "Southern comfort food menu",
+                "Balcony views of Broadway",
+              ],
+              vibe: "Lively & Traditional",
+              priceRange: "$$",
+              bestTime: "Any Time",
+              specialties: [
+                "Three Floors of Music",
+                "All-Day Entertainment",
+                "Broadway Views",
+                "Southern Comfort Food",
+              ],
+            },
+            {
+              id: "the-stage-on-broadway",
+              name: "The Stage on Broadway",
+              category: "Classic Honky-Tonk",
+              description:
+                "The Stage offers authentic Nashville honky-tonk vibes with live music daily and Southern cuisine.",
+              image: "/placeholder.svg?height=400&width=600",
+              location: "412 Broadway, Nashville, TN",
+              instagramEmbed: `<div class="elfsight-app-bfb7843e-b4e3-42af-83cb-ac18163fa128" data-elfsight-app-lazy></div>`,
+              features: [
+                "Two levels of live country music",
+                "Balcony overlooking Broadway",
+                "Southern food menu",
+                "Authentic Nashville atmosphere",
+              ],
+              vibe: "Authentic Nashville",
+              priceRange: "$$",
+              bestTime: "Evening",
+              specialties: [
+                "Live Country Music",
+                "Broadway Views",
+                "Southern Cuisine",
+                "Authentic Atmosphere",
+              ],
+            },
+            {
+              id: "laylas-honky-tonk",
+              name: "Layla's Honky Tonk",
+              category: "Classic Honky-Tonk",
+              description:
+                "Layla's offers authentic bluegrass and classic country in a no-frills Broadway setting.",
+              image: "/placeholder.svg?height=400&width=600",
+              location: "418 Broadway, Nashville, TN",
+              instagramEmbed: `<div class="elfsight-app-1b71a14c-43b1-4978-8191-b37604309305" data-elfsight-app-lazy></div>`,
+              features: [
+                "Focus on bluegrass and traditional country",
+                "No cover charge",
+                "Casual, authentic atmosphere",
+                "Late-night performances",
+              ],
+              vibe: "Authentic & Casual",
+              priceRange: "$",
+              bestTime: "Late Night",
+              specialties: [
+                "Bluegrass Music",
+                "No Cover Charge",
+                "Late-Night Shows",
+                "Authentic Vibe",
+              ],
+            },
+            {
+              id: "legends-corner",
+              name: "Legends Corner",
+              category: "Classic Honky-Tonk",
+              description:
+                "Legends Corner is a Broadway staple known for its tribute to country music legends and live music daily.",
+              image: "/placeholder.svg?height=400&width=600",
+              location: "428 Broadway, Nashville, TN",
+              instagramEmbed: `<div class="elfsight-app-f2c44e4b-4611-47bd-9bf7-e7bd7ae33178" data-elfsight-app-lazy></div>`,
+              features: [
+                "Tributes to country music legends",
+                "Live music from 10am to 3am",
+                "Classic honky-tonk atmosphere",
+                "Affordable drink specials",
+              ],
+              vibe: "Legendary & Lively",
+              priceRange: "$",
+              bestTime: "Afternoon",
+              specialties: [
+                "Country Legends Tribute",
+                "All-Day Music",
+                "Affordable Drinks",
+                "Classic Honky-Tonk",
+              ],
+            },
+          ],
+        },
+        {
+          id: "speakeasies",
+          title: "Speakeasies in Nashville",
+          subtitle:
+            "Hidden gems offering craft cocktails and intimate atmospheres away from the Broadway bustle.",
+          venues: [
+            {
+              id: "the-valentine",
+              name: "The Valentine",
+              category: "Speakeasy",
+              description:
+                "The Valentine at 312 Broadway offers an intimate speakeasy experience with craft cocktails, sophisticated atmosphere, and dim lighting. This hidden gem provides a refined escape from Broadway's hustle with premium spirits, house-made ingredients, and a sophisticated crowd seeking an upscale drinking experience in a cozy, intimate setting.",
+              image: "/placeholder.svg?height=400&width=600",
+              location: "312 Broadway, Nashville, TN 37201",
+              instagramEmbed: `<div class="elfsight-app-62006148-73fb-428c-89f3-fdf5273e4c46" data-elfsight-app-lazy></div>`,
+              features: [
+                "Intimate speakeasy atmosphere with dim lighting and cozy seating",
+                "Expert craft cocktails made with premium spirits",
+                "House-made ingredients and artisanal cocktail preparations",
+                "Sophisticated crowd seeking refined drinking experiences",
+                "Hidden entrance adding to authentic speakeasy mystique",
+                "Carefully curated music and ambiance for conversation",
+              ],
+              vibe: "Sophisticated & Intimate",
+              priceRange: "$$$",
+              bestTime: "Late Evening",
+              specialties: [
+                "Craft Cocktails",
+                "Intimate Setting",
+                "Hidden Entrance",
+                "Premium Spirits",
+              ],
+            },
+            {
+              id: "dirty-little-secret",
+              name: "Dirty Little Secret",
+              category: "Speakeasy",
+              description:
+                "A rooftop speakeasy offering craft cocktails and intimate vibes above the hustle of Printers Alley.",
+              image: "/placeholder.svg?height=400&width=600",
+              location: "210 Printers Alley, Nashville, TN 37201",
+              instagramEmbed: `<div class="elfsight-app-dc3151c5-7f83-476e-807d-9ab6274df8f6" data-elfsight-app-lazy></div>`,
+              features: [
+                "Rooftop location with city views",
+                "Creative craft cocktail menu",
+                "Intimate, moody atmosphere",
+                "Live jazz on select nights",
+              ],
+              vibe: "Moody & Intimate",
+              priceRange: "$$$",
+              bestTime: "Late Night",
+              specialties: [
+                "Rooftop Views",
+                "Craft Cocktails",
+                "Jazz Nights",
+                "Intimate Atmosphere",
+              ],
+            },
+            {
+              id: "red-phone-booth",
+              name: "Red Phone Booth",
+              category: "Speakeasy",
+              description:
+                "An exclusive speakeasy hidden behind an unmarked door, accessed only by password (obtained by texting the number on the door).",
+              image: "/placeholder.svg?height=400&width=600",
+              location: "136 Rosa L. Parks Blvd, Nashville, TN",
+              instagramEmbed: `<div class="elfsight-app-8d8b29bf-1e6c-482b-96d1-2493c0905503" data-elfsight-app-lazy></div>`,
+              features: [
+                "Password-protected entrance",
+                "Premium cigars and spirits",
+                "1920s speakeasy decor",
+                "Expert mixologists",
+              ],
+              vibe: "Exclusive & Sophisticated",
+              priceRange: "$$$$",
+              bestTime: "Late Evening",
+              specialties: [
+                "Password Entry",
+                "Premium Cigars",
+                "1920s Vibe",
+                "Expert Mixology",
+              ],
+            },
+            {
+              id: "hidden-bar-noelle",
+              name: "Hidden Bar – Noelle Hotel",
+              category: "Speakeasy",
+              description:
+                "A stylish speakeasy hidden in the Noelle Hotel, offering creative cocktails in an intimate setting.",
+              image: "/placeholder.svg?height=400&width=600",
+              location: "200 4th Ave N, Nashville, TN",
+              instagramEmbed: `<div class="elfsight-app-b14634f6-8ef6-4bf3-a7ae-e76f6da9eaaf" data-elfsight-app-lazy></div>`,
+              features: [
+                "Hidden location within Noelle Hotel",
+                "Seasonal craft cocktails",
+                "Intimate, stylish atmosphere",
+                "Knowledgeable bartenders",
+              ],
+              vibe: "Stylish & Intimate",
+              priceRange: "$$$",
+              bestTime: "Evening",
+              specialties: [
+                "Hidden Location",
+                "Seasonal Cocktails",
+                "Hotel Speakeasy",
+                "Expert Bartenders",
+              ],
+            },
+            {
+              id: "skulls-rainbow-room",
+              name: "Skull's Rainbow Room",
+              category: "Speakeasy",
+              description:
+                "A historic Printers Alley venue with live jazz, burlesque, and classic cocktails in an intimate setting.",
+              image: "/placeholder.svg?height=400&width=600",
+              location: "225 Printers Alley, Nashville, TN",
+              instagramEmbed: `<div class="elfsight-app-a2a360fa-27de-4094-92db-36f25bc8dc4d" data-elfsight-app-lazy></div>`,
+              features: [
+                "Live jazz and burlesque performances",
+                "Classic cocktail menu",
+                "Historic Printers Alley location",
+                "Intimate, moody atmosphere",
+              ],
+              vibe: "Vintage & Moody",
+              priceRange: "$$$",
+              bestTime: "Night",
+              specialties: [
+                "Live Jazz",
+                "Burlesque Shows",
+                "Classic Cocktails",
+                "Historic Venue",
+              ],
+            },
+            {
+              id: "black-rabbit",
+              name: "Black Rabbit",
+              category: "Speakeasy",
+              description:
+                "A craft cocktail lounge with speakeasy vibes, known for its creative drinks and intimate atmosphere.",
+              image: "/placeholder.svg?height=400&width=600",
+              location: "218 3rd Ave N, Nashville, TN 37201",
+              instagramEmbed: `<div class="elfsight-app-02240aeb-7de6-4931-8b6f-876bff15df07" data-elfsight-app-lazy></div>`,
+              features: [
+                "Creative craft cocktails",
+                "Speakeasy-inspired decor",
+                "Intimate seating",
+                "Knowledgeable bartenders",
+              ],
+              vibe: "Creative & Intimate",
+              priceRange: "$$$",
+              bestTime: "Evening",
+              specialties: [
+                "Craft Cocktails",
+                "Speakeasy Vibe",
+                "Expert Bartenders",
+                "Intimate Setting",
+              ],
+            },
+          ],
+        },
+        {
+          id: "all-category",
+          title: "Multi-Level Entertainment Complexes",
+          subtitle:
+            "Massive venues offering multiple floors of entertainment, dining, and nightlife options.",
+          venues: [
+            {
+              id: "acme-feed-seed",
+              name: "Acme Feed & Seed",
+              category: "Multi-Level Entertainment Complex",
+              description:
+                "Acme Feed & Seed at 101 Broadway is a massive five-floor entertainment complex offering dining, drinking, and entertainment options. From rooftop views to basement bars, this Broadway landmark features multiple restaurants and bars with different themes, live music on multiple levels, and panoramic Nashville skyline views from the rooftop bar.",
+              image: "/placeholder.svg?height=400&width=600",
+              location: "101 Broadway, Nashville, TN 37201",
+              instagramEmbed: `<div class="elfsight-app-72a15310-0b53-43eb-9575-6cf06e0865a2" data-elfsight-app-lazy></div>`,
+              features: [
+                "Five floors of diverse dining, drinking, and entertainment options",
+                "Rooftop bar with panoramic views of Nashville skyline",
+                "Multiple restaurants and bars each with unique themes",
+                "Live music performances on multiple levels throughout the week",
+                "Basement to rooftop experience covering all entertainment preferences",
+                "Large venue accommodating groups of all sizes",
+              ],
+              vibe: "Massive & Diverse",
+              priceRange: "$$$",
+              bestTime: "Any Time",
+              specialties: [
+                "Five-Floor Experience",
+                "Rooftop Views",
+                "Multiple Venues",
+                "Diverse Options",
+              ],
+            },
+            {
+              id: "nashville-underground",
+              name: "Nashville Underground",
+              category: "Multi-Level Entertainment Complex",
+              description:
+                "A multi-level venue offering live music, dining, and drinking across several floors with different vibes.",
+              image: "/placeholder.svg?height=400&width=600",
+              location: "105 Broadway, Nashville, TN 37201",
+              instagramEmbed: `<div class="elfsight-app-45de4340-46a0-4407-8295-51bb642f683e" data-elfsight-app-lazy></div>`,
+              features: [
+                "Four floors of entertainment",
+                "Rooftop bar with downtown views",
+                "Multiple stages with live music",
+                "Southern-inspired menu",
+              ],
+              vibe: "Lively & Diverse",
+              priceRange: "$$",
+              bestTime: "Evening",
+              specialties: [
+                "Multi-Level Experience",
+                "Rooftop Views",
+                "Live Music",
+                "Southern Cuisine",
+              ],
+            },
+            {
+              id: "rippys-bar-grill",
+              name: "Rippy's Bar and Grill",
+              category: "Multi-Level Entertainment Complex",
+              description:
+                "A Broadway staple offering three floors of live music, Southern food, and rooftop views.",
+              image: "/placeholder.svg?height=400&width=600",
+              location: "429 Broadway, Nashville, TN 37203",
+              instagramEmbed: `<div class="elfsight-app-53efb6f8-94df-44fb-ba91-cb10c9820436" data-elfsight-app-lazy></div>`,
+              features: [
+                "Three floors with live music",
+                "Rooftop patio with Broadway views",
+                "Classic Southern menu",
+                "Affordable drink specials",
+              ],
+              vibe: "Classic Broadway",
+              priceRange: "$$",
+              bestTime: "Evening",
+              specialties: [
+                "Three Floors of Music",
+                "Rooftop Views",
+                "Southern Food",
+                "Affordable Drinks",
+              ],
+            },
+            {
+              id: "nudies-honky-tonk",
+              name: "Nudie's",
+              category: "Multi-Level Entertainment Complex",
+              description:
+                "A multi-level honky-tonk paying tribute to Nudie Cohn, the famous rhinestone cowboy tailor.",
+              image: "/placeholder.svg?height=400&width=600",
+              location: "409 Broadway, Nashville, TN 37203",
+              instagramEmbed: `<div class="elfsight-app-269d7a2c-e2e2-4ba2-9480-3ed1eea7e314" data-elfsight-app-lazy></div>`,
+              features: [
+                "Three floors of live music",
+                "Tribute to Nudie Cohn's rhinestone suits",
+                "Rooftop bar with Broadway views",
+                "Classic country atmosphere",
+              ],
+              vibe: "Rhinestone Glam",
+              priceRange: "$$",
+              bestTime: "Night",
+              specialties: [
+                "Nudie Cohn Tribute",
+                "Three Floors of Music",
+                "Rooftop Views",
+                "Classic Country",
+              ],
+            },
+            {
+              id: "show-pony",
+              name: "Show Pony",
+              category: "Multi-Level Entertainment Complex",
+              description:
+                "A multi-level venue offering live music, dining, and drinking with a modern Nashville vibe.",
+              image: "/placeholder.svg?height=400&width=600",
+              location: "121 3rd Ave South, Nashville, TN",
+              instagramEmbed: `<div class="elfsight-app-9a29d69a-2161-46b3-954a-2dbd5a99e98b" data-elfsight-app-lazy></div>`,
+              features: [
+                "Multiple levels with different vibes",
+                "Live music daily",
+                "Modern Southern cuisine",
+                "Craft cocktails",
+              ],
+              vibe: "Modern Nashville",
+              priceRange: "$$$",
+              bestTime: "Evening",
+              specialties: [
+                "Multi-Level Experience",
+                "Live Music",
+                "Modern Southern Cuisine",
+                "Craft Cocktails",
+              ],
+            },
+          ],
+        },
+      ];
+      // Function to generate the table of contents
+      function generateTableOfContents() {
+        const tocContainer = document.getElementById("toc-container");
+
+        categories.forEach((category) => {
+          // Create category section
+          const categoryItem = document.createElement("div");
+          categoryItem.className = "toc-item has-dropdown";
+
+          // Create header
+          const header = document.createElement("div");
+          header.className = "toc-header";
+          header.innerHTML = `
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor" class="dropdown-arrow">
+                <path stroke-linecap="round" stroke-linejoin="round" d="m8.25 4.5 7.5 7.5-7.5 7.5" />
+            </svg>
+            <span class="toc-text">${category.title}</span>
+        `;
+
+          // Create dropdown content
+          const dropdownContent = document.createElement("div");
+          dropdownContent.className = "dropdown-content";
+
+          // Add venue items as links
+          category.venues.forEach((venue) => {
+            const venueLink = document.createElement("a");
+            venueLink.className = "dropdown-item";
+            venueLink.href = `#${venue.id}`;
+            venueLink.textContent = venue.name;
+
+            dropdownContent.appendChild(venueLink);
+          });
+
+          // Add click event to toggle dropdown
+          header.onclick = function () {
+            const arrow = this.querySelector(".dropdown-arrow");
+            const content =
+              this.parentElement.querySelector(".dropdown-content");
+
+            arrow.classList.toggle("rotated");
+            content.classList.toggle("open");
+          };
+
+          // Assemble the category item
+          categoryItem.appendChild(header);
+          categoryItem.appendChild(dropdownContent);
+          tocContainer.appendChild(categoryItem);
+        });
+      }
+
+      // Function to generate venue sections
+      function generateVenueSections() {
+        const venuesContainer = document.getElementById("venues-container");
+
+        categories.forEach((category, categoryIndex) => {
+          // Create category header
+          const categoryHeader = document.createElement("div");
+          categoryHeader.className = "content-header";
+          categoryHeader.innerHTML = `
+            <h1>${category.title}</h1>
+            <p>${category.subtitle}</p>
+        `;
+          venuesContainer.appendChild(categoryHeader);
+
+          // Create venue cards
+          category.venues.forEach((venue, venueIndex) => {
+            const venueSection = document.createElement("section");
+            venueSection.className = "venue-section";
+            venueSection.id = venue.id;
+
+            const venueCard = document.createElement("div");
+            venueCard.className = "venue-card";
+
+            // Add even/odd class for styling if needed
+            if (venueIndex % 2 === 1) {
+              venueCard.classList.add("even");
+            } else {
+              venueCard.classList.add("odd");
+            }
+
+            // Venue images (Instagram embed)
+            const venueImages = document.createElement("div");
+            venueImages.className = "venue-images";
+            venueImages.innerHTML = venue.instagramEmbed;
+
+            // Venue details
+            const venueDetails = document.createElement("div");
+            venueDetails.className = "venue-details";
+
+            // Venue name and location
+            const venueName = document.createElement("h2");
+            venueName.className = "venue-name";
+            venueName.textContent = venue.name;
+
+            const venueLocation = document.createElement("div");
+            venueLocation.className = "location";
+            venueLocation.innerHTML = `
+                        <svg viewBox="0 0 24 24">
+                            <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5S10.62 6.5 12 6.5s2.5 1.12 2.5 2.5S13.38 11.5 12 11.5z" />
+                        </svg>
+                        ${venue.location}
+                    `;
+
+            // Venue description
+            const venueDescription = document.createElement("div");
+            venueDescription.className = "venue-description";
+            venueDescription.textContent = venue.description;
+
+            // Divider
+            const divider1 = document.createElement("div");
+            divider1.className = "divider";
+
+            // What makes it special (tags)
+            const venueSpecialties = document.createElement("div");
+            venueSpecialties.className = "venue-specialties";
+
+            const specialtiesTitle = document.createElement("h3");
+            specialtiesTitle.textContent = "What Makes It Special";
+
+            const tagsContainer = document.createElement("div");
+            tagsContainer.className = "venue-tags";
+
+            venue.specialties.forEach((specialty) => {
+              const tag = document.createElement("div");
+              tag.className = "tag";
+              tag.textContent = specialty;
+              tagsContainer.appendChild(tag);
+            });
+
+            venueSpecialties.appendChild(specialtiesTitle);
+            venueSpecialties.appendChild(tagsContainer);
+
+            // Divider
+            const divider2 = document.createElement("div");
+            divider2.className = "divider";
+
+            // Unique features
+            const venueFeatures = document.createElement("div");
+            venueFeatures.className = "venue-features";
+
+            const featuresTitle = document.createElement("h3");
+            featuresTitle.textContent = "Unique Features";
+
+            const featuresList = document.createElement("ul");
+
+            venue.features.forEach((feature) => {
+              const featureItem = document.createElement("li");
+              featureItem.textContent = feature;
+              featuresList.appendChild(featureItem);
+            });
+
+            venueFeatures.appendChild(featuresTitle);
+            venueFeatures.appendChild(featuresList);
+
+            // Buttons
+            const buttonsContainer = document.createElement("div");
+            buttonsContainer.className = "venue-buttons";
+
+            const directionBtn = document.createElement("a");
+            directionBtn.className = "btn btn-red";
+            directionBtn.href = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(
+              venue.location
+            )}`;
+            directionBtn.target = "_blank";
+            directionBtn.textContent = "Get Directions";
+
+            const bookBtn = document.createElement("a");
+            bookBtn.className = "btn btn-blue";
+            bookBtn.href =
+              "https://book.peek.com/s/68195431-12b6-4bed-9bf9-a5c919cd4561/qxdqx";
+            bookBtn.target = "_blank";
+            bookBtn.textContent = "Book Bus Tour";
+
+            buttonsContainer.appendChild(directionBtn);
+            buttonsContainer.appendChild(bookBtn);
+
+            // Assemble venue details
+            venueDetails.appendChild(venueName);
+            venueDetails.appendChild(venueLocation);
+            venueDetails.appendChild(venueDescription);
+            venueDetails.appendChild(divider1);
+            venueDetails.appendChild(venueSpecialties);
+            venueDetails.appendChild(divider2);
+            venueDetails.appendChild(venueFeatures);
+            venueDetails.appendChild(buttonsContainer);
+
+            // Assemble venue card
+            venueCard.appendChild(venueImages);
+            venueCard.appendChild(venueDetails);
+
+            // Add to section
+            venueSection.appendChild(venueCard);
+            venuesContainer.appendChild(venueSection);
+          });
+        });
+      }
+
+      // Initialize the page
+      document.addEventListener("DOMContentLoaded", () => {
+        generateTableOfContents();
+        generateVenueSections();
+
+        // Load Instagram embeds after the DOM is fully loaded
+        const script = document.createElement("script");
+        script.src = "https://static.elfsight.com/platform/platform.js";
+        script.async = true;
+        document.body.appendChild(script);
+      });
+    </script>
 
     <script>
       const hamburger = document.getElementById("hamburger");
