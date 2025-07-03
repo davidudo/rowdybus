@@ -1,0 +1,1215 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>All of Nashville's Downtown Broadway Bars - Rowdy Bus</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&family=Unbounded:wght@200..900&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      rel="icon"
+      href="https://www.rowdybus.com/wp-content/uploads/2024/06/fav-icon-rowdy-boats.png"
+      sizes="32x32"
+    />
+    <link
+      rel="icon"
+      href="https://www.rowdybus.com/wp-content/uploads/2024/06/fav-icon-rowdy-boats.png"
+      sizes="192x192"
+    />
+    <link
+      rel="apple-touch-icon"
+      href="https://www.rowdybus.com/wp-content/uploads/2024/06/fav-icon-rowdy-boats.png"
+    />
+    <style>
+      * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+      }
+
+      a {
+        text-decoration: none;
+      }
+
+      body {
+        font-family: "Montserrat", sans-serif;
+        font-optical-sizing: auto;
+        font-style: normal;
+      }
+
+      .container {
+        max-width: 1300px;
+        margin-right: auto;
+        margin-left: auto;
+      }
+
+      /* Header */
+      header {
+        display: flex;
+        align-items: center;
+        padding: 0.2rem 2rem;
+        background: transparent;
+        position: fixed;
+        width: 100%;
+        z-index: 20;
+        transition: background 0.3s ease;
+      }
+
+      header.scrolled {
+        background: rgba(0, 0, 0, 0.8);
+        backdrop-filter: blur(8px);
+        -webkit-backdrop-filter: blur(8px);
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+      }
+
+      header.darkened {
+        background: #111;
+      }
+
+      .logo {
+        width: 100%;
+      }
+
+      .logo img {
+        height: 4rem;
+        width: auto;
+      }
+
+      nav {
+        display: flex;
+        gap: 2rem;
+      }
+
+      nav a {
+        color: white;
+        text-decoration: none;
+        font-weight: 600;
+        white-space: nowrap;
+      }
+
+      nav a:hover {
+        color: rgb(219, 219, 219);
+        transition: color 0.3s ease;
+      }
+
+      .ctas {
+        display: flex;
+        align-items: center;
+        justify-content: flex-end;
+        gap: 1rem;
+        width: 100%;
+      }
+
+      .ctas .action {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 0.5rem;
+        background: white;
+        color: #cc0000;
+        font-weight: bold;
+        font-size: small;
+        padding: 0.6rem 1rem;
+        border-radius: 8px;
+        border: none;
+        cursor: pointer;
+      }
+
+      .ctas .action svg {
+        height: 1rem;
+        width: auto;
+      }
+
+      .ctas .action:hover {
+        background-color: rgb(238, 238, 238);
+        transition: color 0.3s ease;
+      }
+
+      .hamburger {
+        display: none;
+        background: none;
+        border: none;
+      }
+
+      .hamburger svg {
+        cursor: pointer;
+        height: 2rem;
+        width: 2rem;
+        color: white;
+      }
+
+      .mobile-menu {
+        position: fixed;
+        top: 75px;
+        right: -100%;
+        background: #111;
+        width: 100%;
+        height: calc(100% - 3rem);
+        display: flex;
+        flex-direction: column;
+        padding: 1rem;
+        gap: 1.5rem;
+        transition: right 0.3s ease-in-out;
+        z-index: 15;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+
+      .mobile-menu.show {
+        right: 0;
+      }
+
+      .mobile-menu a {
+        color: white;
+        font-weight: bold;
+        text-decoration: none;
+        font-size: 1rem;
+        text-align: center;
+      }
+
+      @media (max-width: 1024px) {
+        nav {
+          display: none;
+        }
+
+        .hamburger {
+          display: flex;
+          align-items: center;
+          justify-content: center;
+        }
+
+        .ctas {
+          display: none;
+        }
+
+        .mobile-ctas {
+          display: flex;
+          flex-direction: column;
+          gap: 1.5rem;
+          width: 100%;
+        }
+
+        .mobile-ctas .action {
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          gap: 0.5rem;
+          background: white;
+          color: #cc0000;
+          font-weight: bold;
+          padding: 0.8rem 1rem;
+          border-radius: 8px;
+          border: none;
+          cursor: pointer;
+          width: 100%;
+        }
+
+        .mobile-ctas .action svg {
+          height: 1rem;
+          width: auto;
+        }
+
+        .mobile-ctas .action:hover {
+          background-color: rgb(238, 238, 238);
+          transition: color 0.3s ease;
+        }
+      }
+
+      @media (max-width: 768px) {
+        header {
+          padding: 0.2rem 1rem;
+        }
+
+        .logo img {
+          height: 3rem;
+          width: auto;
+        }
+
+        .mobile-menu {
+          top: 57px;
+          height: 100%;
+        }
+      }
+
+      /* Hero Section */
+      .hero {
+        background: linear-gradient(
+            to top,
+            rgba(0, 0, 0, 0.98),
+            rgba(0, 0, 0, 0)
+          ),
+          url("/images/hero.jpg") no-repeat center center/cover;
+        height: 100vh;
+        display: flex;
+        flex-direction: row;
+        align-items: flex-end;
+        padding: 6rem 2rem;
+      }
+
+      .hero-sub {
+        display: inline-flex;
+        font-size: 1.2rem;
+        margin-bottom: 0.5rem;
+        color: #ffffff;
+        padding: 10px;
+        border-radius: 6px;
+        background-color: #ffffff34;
+      }
+
+      .hero-title {
+        font-size: 4.2rem;
+        font-weight: 900;
+        line-height: 1.2;
+        font-family: "Unbounded", sans-serif;
+        max-width: 90%;
+        color: white;
+      }
+
+      .hero-title .text-red {
+        color: #cc0000;
+      }
+
+      .hero-title .text-blue {
+        color: #002d65;
+      }
+
+      .hero-action {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 0.5rem;
+        background: white;
+        color: #cc0000;
+        font-weight: 800;
+        font-size: large;
+        padding: 1rem 5rem;
+        border-radius: 12px;
+        border: none;
+        cursor: pointer;
+        white-space: nowrap;
+      }
+
+      .hero-action:hover {
+        background-color: rgb(238, 238, 238);
+        transition: color 0.3s ease;
+      }
+
+      @media (max-width: 1024px) {
+        .hero-title {
+          font-size: 2.5rem;
+        }
+
+        .hero-sub {
+          font-size: 1rem;
+        }
+
+        .hero-action {
+          font-size: medium;
+          padding: 1rem 4rem;
+          border-radius: 12px;
+        }
+      }
+
+      @media (max-width: 768px) {
+        .hero {
+          flex-direction: column;
+          justify-content: flex-end;
+          align-items: flex-start;
+          max-width: none;
+          padding: 2rem 1rem;
+        }
+
+        .hero-title {
+          font-size: 2rem;
+        }
+
+        .hero-sub {
+          font-size: 0.8rem;
+          padding: 6px 10px;
+        }
+
+        .hero-action {
+          margin-top: 1.5rem;
+          padding: 0.85rem 3rem;
+          border-radius: 12px;
+        }
+      }
+
+      /* Features Section */
+      .features {
+        display: flex;
+        flex-direction: row;
+        flex-wrap: wrap;
+        justify-content: space-between;
+        color: #000;
+        padding: 2rem 2rem;
+        gap: 2rem;
+      }
+
+      .feature-box {
+        display: flex;
+        flex-direction: row;
+        border-radius: 12px;
+        border: 1.5px solid #b3b3b3;
+        padding: 1.5rem;
+        flex: 1 1 200px;
+        gap: 1rem;
+        width: auto;
+      }
+
+      .feature-box .feature-icon {
+        background-color: #99c6ff;
+        padding: 1rem;
+        border-radius: 8px;
+        height: fit-content;
+      }
+
+      .feature-box .feature-icon svg {
+        width: 24px;
+        height: 24px;
+        color: #002d65;
+      }
+
+      .feature-box .feature-text {
+        display: flex;
+        flex-direction: column;
+      }
+
+      .feature-box h3 {
+        font-family: "Unbounded", sans-serif;
+        font-size: 2.5rem;
+      }
+
+      .feature-box p {
+        color: #5a5a5a;
+        font-weight: 500;
+        white-space: nowrap;
+      }
+
+      @media (max-width: 768px) {
+        .features {
+          padding: 2rem 1rem;
+          gap: 1rem;
+        }
+
+        .feature-box h3 {
+          font-size: 2rem;
+        }
+      }
+
+      /* Blog Content Section */
+      .blog-content {
+        padding: 2rem;
+      }
+
+      .header {
+        color: #002d65;
+      }
+
+      .header h1 {
+        font-size: 3rem;
+        font-weight: bold;
+        margin-bottom: 20px;
+        line-height: 1.1;
+        font-family: "Unbounded", sans-serif;
+      }
+
+      .header p {
+        font-size: 1.1rem;
+        margin-bottom: 2rem;
+        line-height: 1.6;
+        opacity: 0.95;
+      }
+
+      .map-container {
+        position: relative;
+        width: 100%;
+        height: 500px;
+        background: linear-gradient(45deg, #e3f2fd 0%, #bbdefb 100%);
+        overflow: hidden;
+        margin: 0;
+        border-radius: 20px;
+        margin-bottom: 2rem;
+        border: 1.5px solid #b3b3b3;
+      }
+
+      .cta-button {
+        background-color: #cc0000;
+        color: white;
+        padding: 12px 40px;
+        border: none;
+        border-radius: 12px;
+        font-size: 1.3rem;
+        font-weight: bold;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        margin: auto auto;
+        text-align: center;
+      }
+
+      .cta-button-container {
+        width: 100%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+
+      .cta-button:hover {
+        background-color: #e70202;
+        transition: color 0.3s ease;
+      }
+
+      .table-of-contents {
+        margin: 40px 0px;
+        border-radius: 18px;
+        border: 1.5px solid #b3b3b3;
+        overflow: hidden;
+        padding: 1rem;
+      }
+
+      .table-of-contents h2 {
+        padding: 15px 20px;
+        margin-bottom: 0.5rem;
+        background: #e6e6e6;
+        font-size: 1.2em;
+        border-radius: 13px;
+      }
+
+      .toc-item {
+        padding: 12px 0px;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        transition: all 0.3s ease;
+        color: #4c4c44;
+      }
+
+      .toc-item.has-dropdown {
+        flex-direction: column;
+        align-items: stretch;
+        padding: 0;
+      }
+
+      .toc-header {
+        padding: 12px 0px;
+        display: flex;
+        align-items: center;
+        width: 100%;
+        font-weight: 500;
+      }
+
+      .toc-icon {
+        width: 20px;
+        height: 20px;
+        margin-right: 10px;
+      }
+
+      .toc-text {
+        flex-grow: 1;
+      }
+
+      .dropdown-arrow {
+        height: 16px;
+        width: 16px;
+        margin-right: 0.5rem;
+        transition: transform 0.3s ease;
+      }
+
+      .dropdown-content {
+        max-height: 0;
+        overflow: hidden;
+        transition: max-height 0.3s ease;
+      }
+
+      .dropdown-content.open {
+        max-height: 500px;
+      }
+
+      .dropdown-item {
+        padding: 10px 20px 10px 50px;
+        cursor: pointer;
+        transition: background 0.2s;
+      }
+
+      .dropdown-item:hover {
+        background: #efefef;
+        border-radius: 12px;
+      }
+
+      .dropdown-arrow.rotated {
+        transform: rotate(90deg);
+      }
+
+      @media (max-width: 768px) {
+        .blog-content {
+          padding: 2rem 1rem;
+        }
+
+        .header h1 {
+          font-size: 2rem;
+        }
+
+        .header p {
+          font-size: 1rem;
+        }
+
+        .map-container {
+          height: 350px;
+        }
+
+        .cta-button {
+          width: 100%;
+        }
+
+        .cta-button {
+          font-size: 1.1rem;
+          padding: 15px 30px;
+        }
+
+        .table-of-contents {
+          padding: 20px;
+        }
+      }
+
+      .section-container {
+        display: flex;
+        gap: 2rem;
+        flex-wrap: wrap;
+        background: #fff;
+        padding: 2rem;
+        border-radius: 1rem;
+      }
+
+      .image-grid {
+        flex: 1 1 350px;
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 1rem;
+      }
+
+      .image-grid img {
+        width: 100%;
+        height: auto;
+        border-radius: 1rem;
+        object-fit: cover;
+      }
+
+      .content {
+        flex: 1 1 400px;
+        display: flex;
+        flex-direction: column;
+        gap: 1rem;
+      }
+
+      .content h2 {
+        font-size: 1.8rem;
+        color: #05285e;
+      }
+
+      .location {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        font-size: 0.95rem;
+        color: #333;
+      }
+
+      .location svg {
+        width: 18px;
+        height: 18px;
+        fill: #333;
+      }
+
+      .content p {
+        font-size: 1rem;
+        line-height: 1.5;
+        color: #444;
+      }
+
+      .divider {
+        border-top: 1px solid #ccc;
+        margin: 1rem 0;
+      }
+
+      .tags {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.5rem;
+      }
+
+      .tag {
+        background: #b9d6ff;
+        color: #05285e;
+        padding: 0.4rem 0.8rem;
+        border-radius: 8px;
+        font-size: 0.85rem;
+        font-weight: 500;
+      }
+
+      .buttons {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 1rem;
+        margin-top: 1rem;
+      }
+
+      .btn {
+        padding: 0.75rem 1.5rem;
+        border-radius: 12px;
+        font-size: 1rem;
+        font-weight: bold;
+        cursor: pointer;
+        border: none;
+      }
+
+      .btn.red {
+        background: #c90000;
+        color: #fff;
+      }
+
+      .btn.blue {
+        background: #05285e;
+        color: #fff;
+      }
+
+      @media (max-width: 768px) {
+        .section-container {
+          flex-direction: column;
+          padding: 1rem;
+        }
+
+        .image-grid {
+          grid-template-columns: 1fr 1fr;
+        }
+
+        .content h2 {
+          font-size: 1.5rem;
+        }
+
+        .btn {
+          flex: 1 1 100%;
+          text-align: center;
+        }
+      }
+
+      @media (max-width: 480px) {
+        .image-grid {
+          grid-template-columns: 1fr;
+        }
+
+        .buttons {
+          flex-direction: column;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <header>
+      <a class="logo" href="/">
+        <img
+          src="https://www.rowdybus.com/wp-content/webp-express/webp-images/uploads/2024/04/Rowdy-Bus-Logo-270x270px-White-Font-Transparent-Background.png.webp"
+          alt="Rowdybus Logo"
+        />
+      </a>
+
+      <nav>
+        <a href="https://www.rowdybus.com/party-bus/">Bus Fleet</a>
+        <a href="https://www.rowdybus.com/blogs/">Blog</a>
+        <a href="https://www.rowdybus.com/faq-rowdy-bus/">FAQ</a>
+        <a href="https://www.rowdybus.com/contact-us/">Contact Us</a>
+      </nav>
+
+      <button class="hamburger" id="hamburger">
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          fill="none"
+          viewBox="0 0 24 24"
+          stroke-width="1.5"
+          stroke="currentColor"
+          class="size-6"
+        >
+          <path
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5"
+          />
+        </svg>
+      </button>
+
+      <div class="ctas">
+        <a href="tel:(615)212-8869" class="action">
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            viewBox="0 0 24 24"
+            fill="currentColor"
+          >
+            <path
+              fill-rule="evenodd"
+              d="M1.5 4.5a3 3 0 0 1 3-3h1.372c.86 0 1.61.586 1.819 1.42l1.105 4.423a1.875 1.875 0 0 1-.694 1.955l-1.293.97c-.135.101-.164.249-.126.352a11.285 11.285 0 0 0 6.697 6.697c.103.038.25.009.352-.126l.97-1.293a1.875 1.875 0 0 1 1.955-.694l4.423 1.105c.834.209 1.42.959 1.42 1.82V19.5a3 3 0 0 1-3 3h-2.25C8.552 22.5 1.5 15.448 1.5 6.75V4.5Z"
+              clip-rule="evenodd"
+            />
+          </svg>
+          (615) 212-8869
+        </a>
+        <a
+          href="https://book.peek.com/s/68195431-12b6-4bed-9bf9-a5c919cd4561/qxdqx?gaClientId=1634138304.1751451774&gaSessionId=1751486043&_gl=1*uw9jan*_gcl_au*NzgyNjEwMDI1LjE3NTE0NTE3NzQ.*_ga*MTYzNDEzODMwNC4xNzUxNDUxNzc0*_ga_G9R0HRFNSE*czE3NTE0ODYwNDMkbzIkZzEkdDE3NTE0ODYwNjgkajM1JGwwJGgw"
+          class="action"
+          >Book Now</a
+        >
+      </div>
+    </header>
+
+    <div class="mobile-menu" id="mobileMenu">
+      <a href="https://www.rowdybus.com/party-bus/">Bus Fleet</a>
+      <a href="https://www.rowdybus.com/blogs/">Blog</a>
+      <a href="https://www.rowdybus.com/faq-rowdy-bus/">FAQ</a>
+      <a href="https://www.rowdybus.com/contact-us/">Contact Us</a>
+
+      <div class="mobile-ctas">
+        <a href="tel:(615)212-8869" class="action">
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            viewBox="0 0 24 24"
+            fill="currentColor"
+          >
+            <path
+              fill-rule="evenodd"
+              d="M1.5 4.5a3 3 0 0 1 3-3h1.372c.86 0 1.61.586 1.819 1.42l1.105 4.423a1.875 1.875 0 0 1-.694 1.955l-1.293.97c-.135.101-.164.249-.126.352a11.285 11.285 0 0 0 6.697 6.697c.103.038.25.009.352-.126l.97-1.293a1.875 1.875 0 0 1 1.955-.694l4.423 1.105c.834.209 1.42.959 1.42 1.82V19.5a3 3 0 0 1-3 3h-2.25C8.552 22.5 1.5 15.448 1.5 6.75V4.5Z"
+              clip-rule="evenodd"
+            />
+          </svg>
+          (615) 212-8869
+        </a>
+        <a
+          href="https://book.peek.com/s/68195431-12b6-4bed-9bf9-a5c919cd4561/qxdqx?gaClientId=1634138304.1751451774&gaSessionId=1751486043&_gl=1*tm2c56*_gcl_au*NzgyNjEwMDI1LjE3NTE0NTE3NzQ.*_ga*MTYzNDEzODMwNC4xNzUxNDUxNzc0*_ga_G9R0HRFNSE*czE3NTE0ODYwNDMkbzIkZzEkdDE3NTE0ODYwNjgkajM1JGwwJGgw"
+          class="action"
+          >Book Now</a
+        >
+      </div>
+    </div>
+
+    <section class="hero">
+      <div class="hero-text">
+        <p class="hero-sub">Destinations Waiting to Be Discovered</p>
+        <h1 class="hero-title">
+          THE ULTIMATE GUIDE TO NASHVILLE'S <span class="text-blue">BROAD</span
+          ><span class="text-red">WAY</span> BARS
+        </h1>
+      </div>
+      <a
+        href="https://book.peek.com/s/68195431-12b6-4bed-9bf9-a5c919cd4561/qxdqx?gaClientId=1634138304.1751451774&gaSessionId=1751486043&_gl=1*tm2c56*_gcl_au*NzgyNjEwMDI1LjE3NTE0NTE3NzQ.*_ga*MTYzNDEzODMwNC4xNzUxNDUxNzc0*_ga_G9R0HRFNSE*czE3NTE0ODYwNDMkbzIkZzEkdDE3NTE0ODYwNjgkajM1JGwwJGgw"
+        class="hero-action"
+        >Book Now</a
+      >
+    </section>
+
+    <section class="features">
+      <div class="feature-box">
+        <div class="feature-icon">
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke-width="1.5"
+            stroke="currentColor"
+            class="size-6"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              d="m9 9 10.5-3m0 6.553v3.75a2.25 2.25 0 0 1-1.632 2.163l-1.32.377a1.803 1.803 0 1 1-.99-3.467l2.31-.66a2.25 2.25 0 0 0 1.632-2.163Zm0 0V2.25L9 5.25v10.303m0 0v3.75a2.25 2.25 0 0 1-1.632 2.163l-1.32.377a1.803 1.803 0 0 1-.99-3.467l2.31-.66A2.25 2.25 0 0 0 9 15.553Z"
+            />
+          </svg>
+        </div>
+        <div class="feature-box-text">
+          <h3>15+</h3>
+          <p>Live Venues</p>
+        </div>
+      </div>
+      <div class="feature-box">
+        <div class="feature-icon">
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke-width="1.5"
+            stroke="currentColor"
+            class="size-6"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              d="M15 10.5a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z"
+            />
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              d="M19.5 10.5c0 7.142-7.5 11.25-7.5 11.25S4.5 17.642 4.5 10.5a7.5 7.5 0 1 1 15 0Z"
+            />
+          </svg>
+        </div>
+        <div class="feature-box-text">
+          <h3>4</h3>
+          <p>Broadway Blocks</p>
+        </div>
+      </div>
+      <div class="feature-box">
+        <div class="feature-icon">
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke-width="1.5"
+            stroke="currentColor"
+            class="size-6"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              d="M12 6v6h4.5m4.5 0a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"
+            />
+          </svg>
+        </div>
+        <div class="feature-box-text">
+          <h3>24/7</h3>
+          <p>Hours of Fun</p>
+        </div>
+      </div>
+      <div class="feature-box">
+        <div class="feature-icon">
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke-width="1.5"
+            stroke="currentColor"
+            class="size-6"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              d="M15 19.128a9.38 9.38 0 0 0 2.625.372 9.337 9.337 0 0 0 4.121-.952 4.125 4.125 0 0 0-7.533-2.493M15 19.128v-.003c0-1.113-.285-2.16-.786-3.07M15 19.128v.106A12.318 12.318 0 0 1 8.624 21c-2.331 0-4.512-.645-6.374-1.766l-.001-.109a6.375 6.375 0 0 1 11.964-3.07M12 6.375a3.375 3.375 0 1 1-6.75 0 3.375 3.375 0 0 1 6.75 0Zm8.25 2.25a2.625 2.625 0 1 1-5.25 0 2.625 2.625 0 0 1 5.25 0Z"
+            />
+          </svg>
+        </div>
+        <div class="feature-box-text">
+          <h3>1k+</h3>
+          <p>Party Capacity</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="blog-content container">
+      <div class="header">
+        <h1>
+          Best Broadway Bars in Nashville: Must-Visit Celebrity & Classic
+          Honky-Tonks
+        </h1>
+        <p>
+          Saddle up for Nashville’s electrifying nightlife! Morgan Wallen’s new
+          hotspot dazzles with live music. Robert’s Western World charms with
+          classic country soul. These Broadway bars offer star-studded menus,
+          iconic photo ops, and authentic experiences. Whether you love
+          celebrity haunts or honky-tonks, dive into our guide for your ultimate
+          Nashville bar crawl!
+        </p>
+      </div>
+
+      <div class="map-container">
+        <iframe
+          width="100%"
+          height="100%"
+          src="https://www.openstreetmap.org/export/embed.html?bbox=7.914978861808778%2C4.6365529581861%2C7.919484972953797%2C4.640621909232194&amp;layer=cyclemap"
+          style="border: none"
+        ></iframe>
+      </div>
+
+      <div class="cta-button-container">
+        <a
+          href="https://book.peek.com/s/68195431-12b6-4bed-9bf9-a5c919cd4561/qxdqx?gaClientId=1634138304.1751451774&gaSessionId=1751486043&_gl=1*122v1y6*_gcl_au*NzgyNjEwMDI1LjE3NTE0NTE3NzQ.*_ga*MTYzNDEzODMwNC4xNzUxNDUxNzc0*_ga_G9R0HRFNSE*czE3NTE1MDQyNDMkbzQkZzAkdDE3NTE1MDQyNDMkajYwJGwwJGgw"
+          class="cta-button"
+          onclick="bookTour()"
+          >Book Now</a
+        >
+      </div>
+
+      <div class="content-section">
+        <div class="table-of-contents">
+          <h2>Table of Content</h2>
+
+          <div class="toc-item has-dropdown">
+            <div class="toc-header" onclick="toggleDropdown(this)">
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke-width="2.5"
+                stroke="currentColor"
+                class="dropdown-arrow"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  d="m8.25 4.5 7.5 7.5-7.5 7.5"
+                />
+              </svg>
+
+              <span class="toc-text">Celebrity Bars</span>
+            </div>
+            <div class="dropdown-content">
+              <div
+                class="dropdown-item"
+                onclick="scrollToSection('morgan-wallen-kitchen')"
+              >
+                Morgan Wallen's This Bar + Kitchen
+              </div>
+              <div
+                class="dropdown-item"
+                onclick="scrollToSection('blake-shelton-ole-red')"
+              >
+                Blake Shelton’s Ole Red
+              </div>
+              <div
+                class="dropdown-item"
+                onclick="scrollToSection('jason-aldean-kitchen')"
+              >
+                Jason Aldean’s Kitchen + Rooftop Bar
+              </div>
+              <div
+                class="dropdown-item"
+                onclick="scrollToSection('bell-bottom-up')"
+              >
+                Bell Bottoms Up
+              </div>
+              <div
+                class="dropdown-item"
+                onclick="scrollToSection('dierks-bentley-whisky-row')"
+              >
+                Dierks Bentley’s Whiskey Row
+              </div>
+              <div
+                class="dropdown-item"
+                onclick="scrollToSection('aj-good-time-bar')"
+              >
+                AJ’s Good Time Bar
+              </div>
+              <div
+                class="dropdown-item"
+                onclick="scrollToSection('eric-church-chief')"
+              >
+                Eric Church's Chief's
+              </div>
+              <div
+                class="dropdown-item"
+                onclick="scrollToSection('jbj-nashville')"
+              >
+                JBJ’s Nashville
+              </div>
+              <div
+                class="dropdown-item"
+                onclick="scrollToSection('friends-in-low-places')"
+              >
+                Friends in Low Places (Garth Brooks)
+              </div>
+              <div class="dropdown-item" onclick="scrollToSection('fgl')">
+                FGL House
+              </div>
+            </div>
+          </div>
+
+          <div class="toc-item has-dropdown">
+            <div class="toc-header" onclick="toggleDropdown(this)">
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke-width="2.5"
+                stroke="currentColor"
+                class="dropdown-arrow"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  d="m8.25 4.5 7.5 7.5-7.5 7.5"
+                />
+              </svg>
+
+              <span class="toc-text">Classic Honky-Tonks in Nashville</span>
+            </div>
+            <div class="dropdown-content">
+              <div
+                class="dropdown-item"
+                onclick="scrollToSection('robert-western-world')"
+              >
+                Robert’s Western World
+              </div>
+              <div
+                class="dropdown-item"
+                onclick="scrollToSection('the-stage-on-broadway')"
+              >
+                The Stage on Broadway
+              </div>
+              <div
+                class="dropdown-item"
+                onclick="scrollToSection('honky-tonk-central')"
+              >
+                Honky Tonk Central
+              </div>
+              <div
+                class="dropdown-item"
+                onclick="scrollToSection('legends-corner')"
+              >
+                Legends Corner
+              </div>
+              <div
+                class="dropdown-item"
+                onclick="scrollToSection('tootsie-orchid-lounge')"
+              >
+                Tootsie's Orchid Lounge
+              </div>
+              <div
+                class="dropdown-item"
+                onclick="scrollToSection('layla-honky-tonk')"
+              >
+                Layla’s Honky Tonk
+              </div>
+              <div
+                class="dropdown-item"
+                onclick="scrollToSection('eric-church-chief')"
+              >
+                Eric Church's Chief's
+              </div>
+              <div
+                class="dropdown-item"
+                onclick="scrollToSection('jbj-nashville')"
+              >
+                JBJ’s Nashville
+              </div>
+              <div
+                class="dropdown-item"
+                onclick="scrollToSection('friends-in-low-places')"
+              >
+                Friends in Low Places (Garth Brooks)
+              </div>
+              <div class="dropdown-item" onclick="scrollToSection('fgl')">
+                FGL House
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section-container container">
+      <div class="image-grid">
+        <img
+          src="https://via.placeholder.com/300x200?text=Image+1"
+          alt="Bar Image 1"
+        />
+        <img
+          src="https://via.placeholder.com/300x200?text=Image+2"
+          alt="Bar Image 2"
+        />
+        <img
+          src="https://via.placeholder.com/300x200?text=Image+3"
+          alt="Bar Image 3"
+        />
+        <img
+          src="https://via.placeholder.com/300x200?text=Image+4"
+          alt="Bar Image 4"
+        />
+      </div>
+
+      <div class="content">
+        <h2>Morgan Wallen's This Bar + Kitchen, June 2024</h2>
+
+        <div class="location">
+          <svg viewBox="0 0 24 24">
+            <path
+              d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5S10.62 6.5 12 6.5s2.5 1.12 2.5 2.5S13.38 11.5 12 11.5z"
+            />
+          </svg>
+          107 4th Avenue North, Nashville, TN
+        </div>
+
+        <p>
+          Morgan Wallen's This Bar + Kitchen spans six stories with rooftop
+          stages, personal memorabilia, and Southern-style comfort food.
+          <a href="#" style="color: #05285e; text-decoration: underline"
+            >see more.</a
+          >
+        </p>
+
+        <div class="divider"></div>
+
+        <h3>What Makes It Special</h3>
+        <div class="tags">
+          <div class="tag">Personal Memorabilia</div>
+          <div class="tag">Family Recipes</div>
+          <div class="tag">Six-Story Experience</div>
+          <div class="tag">East Tennessee Heritage</div>
+        </div>
+
+        <div class="divider"></div>
+
+        <h3>Unique Features</h3>
+        <ul class="features">
+          <li>
+            Three live music stages and an open-air rooftop create a dynamic,
+            multi-level experience unlike smaller venues.
+          </li>
+          <li>
+            Memorabilia from Wallen’s childhood and career showcases his East
+            Tennessee heritage.
+          </li>
+        </ul>
+
+        <div class="buttons">
+          <button class="btn red">Get Direction</button>
+          <button class="btn blue">Book Bus Tour</button>
+        </div>
+      </div>
+    </section>
+
+    <footer></footer>
+
+    <script>
+      const hamburger = document.getElementById("hamburger");
+      const mobileMenu = document.getElementById("mobileMenu");
+      const header = document.querySelector("header");
+
+      window.addEventListener("scroll", () => {
+        if (window.scrollY > 10) {
+          header.classList.add("scrolled");
+        } else {
+          header.classList.remove("scrolled");
+        }
+      });
+
+      hamburger.addEventListener("click", () => {
+        mobileMenu.classList.toggle("show");
+        header.classList.toggle("darkened");
+      });
+
+      function toggleDropdown(header) {
+        const dropdown = header.parentElement;
+        const content = dropdown.querySelector(".dropdown-content");
+        const arrow = dropdown.querySelector(".dropdown-arrow");
+
+        content.classList.toggle("open");
+        arrow.classList.toggle("rotated");
+      }
+
+      function scrollToSection(sectionId) {
+        // In a real implementation, this would scroll to the corresponding section
+        console.log(`Scrolling to ${sectionId} section...`);
+        // Example: document.getElementById(sectionId).scrollIntoView({ behavior: 'smooth' });
+      }
+    </script>
+  </body>
+</html>
